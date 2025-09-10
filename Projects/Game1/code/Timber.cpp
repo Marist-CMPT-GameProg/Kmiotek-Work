@@ -88,7 +88,49 @@ int main()
 	float cloud2Speed = 0.0f;
 	float cloud3Speed = 0.0f;
 
+	//Time variables
+	Clock clock;
 
+	while (window.isOpen())
+	{
+		//Track player input
+		if (Keyboard::isKeyPressed(Keyboard::Escape))
+		{
+			window.close();
+		}
+
+		//Measure time
+		Time dt = clock.restart();
+
+		//Setup bee
+		if (!beeActive)
+		{
+			srand((int)time(0));
+			beeSpeed = (rand() % 200) + 200;
+
+			//Bee height
+			srand((int)time(0) * 10);
+			float height = (rand() % 500) + 500;
+			spriteBee.setPosition(2000, height);
+			beeActive = true;
+		}
+		else
+		{
+			//Move bee
+			spriteBee.setPosition(
+				spriteBee.getPosition().x -
+				(beeSpeed * dt.asSeconds()),
+				spriteBee.getPosition().y);
+
+			//Set new bee to appear if current bee reaches left edge of the screen
+			if (spriteBee.getPosition().x < -100)
+			{
+				beeActive = false
+			}
+		}
+
+
+	}
 
 }
 
