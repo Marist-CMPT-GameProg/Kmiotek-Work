@@ -52,6 +52,43 @@ int main()
 	spriteTree.setTexture(textureTree);
 	spriteTree.setPosition(810, 0);
 
+	//Creating the bee
+	Texture textureBee;
+	textureBee.loadFromFile("graphics/bee.png")
+		Sprite spriteBee;
+	spriteBee.setTexture(textureBee);
+	spriteBee.setPosition(0, 800);
+
+	bool beeActive = false;
+	//Set bee speed
+	float beeSpeed = 0.0f;
+
+	//Making cloud sprites
+	Texture textureCloud;
+	textureCloud.loadFromFile("graphics/cloud.png");
+	Sprite spriteCloud1;
+	spriteCloud1.setTexture(textureCloud);
+	Sprite spriteCloud2;
+	spriteCloud2.setTexture(textureCloud);
+	Sprite spriteCloud3;
+	spriteCloud3.setTexture(textureCloud);
+
+	//Positioning clouds on screen at different heights
+	spriteCloud1.setPosition(0, 0);
+	spriteCloud2.setPosition(0, 250);
+	spriteCloud3.setPosition(0, 500);
+
+	//Are the clouds on screen
+	bool cloud1Active = false;
+	bool cloud2Active = false;
+	bool cloud3Active = false;
+
+	//Cloud speed
+	float cloud1Speed = 0.0f;
+	float cloud2Speed = 0.0f;
+	float cloud3Speed = 0.0f;
+
+
 
 }
 
