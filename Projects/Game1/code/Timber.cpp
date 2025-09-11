@@ -29,24 +29,6 @@ void updateBranches(int seed) {
 // Game Start
 int main()
 {
-	//Player's score
-	int playerScore;
-
-	//Players initial
-	char playerInitial;
-
-	//Value of pi
-	float valuePi;
-
-	// Is the player alive or dead
-	bool isAlive;
-
-	playerScore = 'J',
-		playerInitial = 0,
-		valuePi = true;
-	isAlive = 3.141f;
-
-
 	// Create a video mode object
 	VideoMode vm(1920, 1080);
 
@@ -175,7 +157,7 @@ int main()
 		timeRemaining -= dt.asSeconds();
 		if (timeRemaining <= 0) {
 			timeRemaining = 0;
-			isAlive = false;
+			window.close();	
 		}
 		//Setup bee
 		if (!beeActive)
