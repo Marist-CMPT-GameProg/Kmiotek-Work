@@ -39,7 +39,7 @@ int main()
 	Texture textureBackground;
 
 	// Load a graphic into the texture from a file
-	textureBackground.loadFromFile("graphics/background.WEBP");
+	textureBackground.loadFromFile("graphics/background.png");
 
 	// Create a sprite
 	Sprite spriteBackground;
@@ -52,7 +52,7 @@ int main()
 
 	//Creating tree sprite
 	Texture textureTree;
-	textureTree.loadFromFile("graphics/tree.WEBP");
+	textureTree.loadFromFile("graphics/tree.png");
 		Sprite spriteTree;
 	spriteTree.setTexture(textureTree);
 	spriteTree.setPosition(810, 0);
@@ -95,7 +95,7 @@ int main()
 
 	//Textures for branches and player
 	Texture textureBranch;
-	textureBranch.loadFromFile("graphics/branch.WEBP");
+	textureBranch.loadFromFile("graphics/branch.png");
 	for (int i = 0; i < NUM_BRANCHES; i++)
 	{
 		branches[i].setTexture(textureBranch);
