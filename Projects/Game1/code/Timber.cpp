@@ -57,7 +57,7 @@ int main()
 	Texture textureBackground;
 
 	// Load a graphic into the texture from a file
-	textureBackground.loadFromFile("graphics/background.png");
+	textureBackground.loadFromFile("graphics/background.WEBP");
 
 	// Create a sprite
 	Sprite spriteBackground;
@@ -70,14 +70,14 @@ int main()
 
 	//Creating tree sprite
 	Texture textureTree;
-	textureTree.loadFromFile("graphics/tree.png")
+	textureTree.loadFromFile("graphics/tree.WEBP");
 		Sprite spriteTree;
 	spriteTree.setTexture(textureTree);
 	spriteTree.setPosition(810, 0);
 
 	//Creating the bee
 	Texture textureBee;
-	textureBee.loadFromFile("graphics/bee.png")
+	textureBee.loadFromFile("graphics/bee.png");
 		Sprite spriteBee;
 	spriteBee.setTexture(textureBee);
 	spriteBee.setPosition(0, 800);
@@ -121,8 +121,8 @@ int main()
 	}
 
 	//Player sprite
-	Texture textPlayer;
-	textPlayer.loadFromFile("graphics/player.png");
+	Texture texPlayer;
+	texPlayer.loadFromFile("graphics/player.png");
 	Sprite spritePlayer;
 	spritePlayer.setTexture(texPlayer);
 	//Starts player on left side of screen
@@ -131,7 +131,6 @@ int main()
 	//Game state variables
 	int score = 0;
 	float timeRemaining = 10.0f;
-	bool paused = false;
 	Side playerSide = Side::LEFT;
 
 	//Time variables
@@ -145,9 +144,39 @@ int main()
 			window.close();
 		}
 
+		//Chop to the right
+		if (Keyboard::isKeyPressed(Keyboard::Right))
+		{
+			playerSide = Side::RIGHT;
+			score++;
+			timeRemaining += .15f;
+				spritePlayer.setPosition(1200, 720);
+			updateBranches(score);
+		}
+
+		//Chop to the left
+		if (Keyboard::isKeyPressed(Keyboard::Left))
+		{
+			playerSide = Side::LEFT;
+			score++;
+			timeRemaining += .15f;
+				spritePlayer.setPosition(580, 720);
+			updateBranches(score);
+		}	
+
+		//Duck to avoid bee obstacle
+		if (Keyboard::isKeyPressed(Keyboard::Down))
+		{
+			spritePlayer.move(0, 50);
+		}
+
 		//Measure time
 		Time dt = clock.restart();
-
+		timeRemaining -= dt.asSeconds();
+		if (timeRemaining <= 0) {
+			timeRemaining = 0;
+			isAlive = false;
+		}
 		//Setup bee
 		if (!beeActive)
 		{
@@ -171,7 +200,7 @@ int main()
 			//Set new bee to appear if current bee reaches left edge of the screen
 			if (spriteBee.getPosition().x < -100)
 			{
-				beeActive = false
+				beeActive = false;
 			}
 		}
 		//Managing clouds
