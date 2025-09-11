@@ -95,7 +95,7 @@ int main()
 
 	//Textures for branches and player
 	Texture textureBranch;
-	textureBranch.loadFromFile("graphics/branch.png");
+	textureBranch.loadFromFile("graphics/branch.WEBP");
 	for (int i = 0; i < NUM_BRANCHES; i++)
 	{
 		branches[i].setTexture(textureBranch);
