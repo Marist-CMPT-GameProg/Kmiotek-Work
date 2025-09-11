@@ -1,8 +1,31 @@
 #include <SFML/Graphics.hpp>
+#include <sstream>
 
 using namespace sf;
 using namespace std;
 
+//Creating branches on tree
+const int NUM_BRANCHES = 6;
+//Branch sprites
+Sprite branches[NUM_BRANCHES];
+enum class Side { LEFT, RIGHT, NONE };
+Side branchPositions[NUM_BRANCHES];
+
+//Function to create new branches as old ones are chopped off
+void updateBranches(int seed) {
+	for (int j = NUM_BRANCHES - 1; j > 0; j--) {
+		branchPositions[j] = branchPositions[j - 1];
+	}
+	srand((int)time(0) + seed);
+	int r = rand() % 3;
+	if (r == 0) {
+		branchPositions[0] = Side::LEFT;
+	} else if(r == 1) {
+		branchPositions[0] = Side::RIGHT;
+	} else {
+		branchPositions[0] = Side::NONE;
+	}
+}
 // Game Start
 int main()
 {
@@ -87,6 +110,29 @@ int main()
 	float cloud1Speed = 0.0f;
 	float cloud2Speed = 0.0f;
 	float cloud3Speed = 0.0f;
+
+	//Textures for branches and player
+	Texture textureBranch;
+	textureBranch.loadFromFile("graphics/branch.png");
+	for (int i = 0; i < NUM_BRANCHES; i++)
+	{
+		branches[i].setTexture(textureBranch);
+		branches[i].setOrigin(220, 20);
+	}
+
+	//Player sprite
+	Texture textPlayer;
+	textPlayer.loadFromFile("graphics/player.png");
+	Sprite spritePlayer;
+	spritePlayer.setTexture(texPlayer);
+	//Starts player on left side of screen
+	spritePlayer.setPosition(580, 720);
+
+	//Game state variables
+	int score = 0;
+	float timeRemaining = 10.0f;
+	bool paused = false;
+	Side playerSide = Side::LEFT;
 
 	//Time variables
 	Clock clock;
