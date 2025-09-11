@@ -263,7 +263,41 @@ int main()
 				cloud3Active = false;
 			}
 		}
+	}   if (branchPositions[NUM_BRANCHES - 1] == playerSide) {
+		//Game over
+		window.close();
+	    }
+	if (spriteBee.getGlobalBounds().intersects(spritePlayer.getGlobalBounds())) {
+		//Game over
+		window.close();
 	}
+	//Drawing scene
+		window.clear();
+		window.draw(spriteBackground);
+		window.draw(spriteCloud1);
+		window.draw(spriteCloud2);
+		window.draw(spriteCloud3);
+		window.draw(spriteTree);
+		//Draw tree branches
+		for (int i = 0; i < NUM_BRANCHES; i++){
+			if (branchPositions[i] != Side::NONE){
+				branches[i].setPosition(810, (i * 150));
+				
+				if (branchPositions[i] == Side::LEFT) {
+					branches[i].setRotation(180);
+				}
+				else {
+					branches[i].setRotation(0);
+				}
+				window.draw(branches[i]);
+			}
+		}
+		//Draw the player
+		window.draw(spritePlayer);
+		//Draw the bee
+		window.draw(spriteBee);
+		window.display();
 
+		return 0;
 }
 
