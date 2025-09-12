@@ -26,6 +26,8 @@ void updateBranches(int seed) {
 		branchPositions[0] = Side::NONE;
 	}
 }
+Side playerSide = Side::LEFT;
+bool acceptInput = true;
 // Game Start 
 int main()
 {
@@ -59,7 +61,7 @@ int main()
 	Sprite spriteTree;
 	spriteTree.setTexture(textureTree);
 	spriteTree.setScale(1.5f, 1.5f);
-	spriteTree.setPosition(860, -400);
+	spriteTree.setPosition(840, -400);
 
 	//Creating the bee
 	Texture textureBee;
@@ -120,8 +122,7 @@ int main()
 	//Set player scale
 	spritePlayer.setScale(0.8f, 0.8f);
 	//Starts player on left side of screen
-	spritePlayer.setPosition(580, 700);
-	Side playerSide = Side::LEFT; 
+	spritePlayer.setPosition(580, 700); 
 
 	//Gravestone sprite
 	Texture textureGravestone;
@@ -142,11 +143,12 @@ int main()
 	int score = 0;
 	float timeRemaining = 10.0f; 
 		bool playerDead = false;
-		bool acceptInput = true;
+		bool isDucking = false;
+		const float playerGroundY = 700.f;
 	Clock clock;
 
 	//Make branches align with trunk
-	const float trunkX = 860.0f - 50.0f;
+	const float trunkX = 860.0f + 35.0f;
 	//Make base of tree ground level
 	const float baseY = 720.0f;
 	//Distance between each branch
@@ -161,9 +163,35 @@ int main()
 				window.close();
 			if (event.type == Event::KeyReleased && !playerDead)
 			{
-				acceptInput = true;
-				//Reset player position
-				spritePlayer.setPosition(580, 720);
+				//Actions
+				if (event.key.code == Keyboard::Right) {
+					//Chop to the right
+					playerSide = Side::RIGHT;
+					score++;
+					timeRemaining += 0.15f;
+					spritePlayer.setPosition(1200, 720);
+					updateBranches(score);
+					
+					//Set log to fly out
+					logActive = true;
+					spriteLog.setPosition(860, 720);
+					logSpeedX = 1000.0f;
+					logSpeedY = -500.0f;
+				}
+				else if (event.key.code == Keyboard::Left) {
+					//Chop to the left
+					playerSide = Side::LEFT;
+					score++;
+					timeRemaining += .15f;
+					spritePlayer.setPosition(580, 720);
+					updateBranches(score);
+
+					logActive = true;
+					spriteLog.setPosition(860, 720);
+					logSpeedX = -1000.0f;
+					logSpeedY = -500.0f;
+				}
+			
 			}
 		}
 
@@ -171,46 +199,6 @@ int main()
 		if (!playerDead) timeRemaining -= dt.asSeconds();
 		if (timeRemaining <= 0 && !playerDead) {
 			playerDead = true;
-		}
-
-		//Actions
-		if (Keyboard::isKeyPressed(Keyboard::Escape))
-		{
-			window.close();
-		}
-		if (!playerDead) {
-			//Chop to the right
-			if (acceptInput && Keyboard::isKeyPressed(Keyboard::Right))
-			{
-				acceptInput = false;
-				playerSide = Side::RIGHT;
-				score++;
-				timeRemaining += 0.15f;
-				spritePlayer.setPosition(1200, 720);
-				updateBranches(score);
-
-				//Set log to fly out
-				logActive = true;
-				spriteLog.setPosition(860, 720);
-				logSpeedX = 1000.0f;
-				logSpeedY = -500.0f;
-			}
-
-			//Chop to the left
-			if (acceptInput && Keyboard::isKeyPressed(Keyboard::Left))
-			{
-				acceptInput = false;
-				playerSide = Side::LEFT;
-				score++;
-				timeRemaining += .15f;
-				spritePlayer.setPosition(580, 720);
-				updateBranches(score);
-
-				logActive = true;
-				spriteLog.setPosition(860, 720);
-				logSpeedX = -1000.0f;
-				logSpeedY = -500.0f;
-			}
 		}
 
 		//Move log
@@ -224,9 +212,20 @@ int main()
 		}
 
 		//Duck to avoid bee obstacle
-		if (!playerDead && Keyboard::isKeyPressed(Keyboard::Down))
-		{
-			spritePlayer.move(0, 50);
+		if (!playerDead){
+			if (Keyboard::isKeyPressed(Keyboard::Down))
+			{
+				if (!isDucking) {
+					spritePlayer.move(0, 50);
+					isDucking = true;
+				}
+			}
+			else {
+				if (isDucking) {
+					spritePlayer.setPosition(spritePlayer.getPosition().x, playerGroundY);
+					isDucking = false;
+				}
+			}
 		}
 
 		//Setup bee
@@ -236,7 +235,7 @@ int main()
 			beeSpeed = (rand() % 200) + 200;
 			//Bee height
 			srand((int)time(0) * 10);
-			float height = (rand() % 500) + 500;
+			float height = 630.f;
 			spriteBee.setPosition(2000, height);
 			beeActive = true;
 		}
@@ -325,6 +324,7 @@ int main()
 				cloud3Active = false;
 			}
 		}
+		//Obstacles
 		if (!playerDead && branchPositions[NUM_BRANCHES - 1] == playerSide) {
 			//Game over
 			playerDead = true;
@@ -347,14 +347,22 @@ int main()
 		window.draw(spriteTree);
 
 		//Draw tree branches
+		const float trunkX = 860.0f;
+		const float baseY = 720.0f;
+		const float slotHeight = 250.0f;
+
 		for (int i = 0; i < NUM_BRANCHES; ++i) {
 			if (branchPositions[i] != Side::NONE) {
-				float y = baseY - (NUM_BRANCHES - 1 - i) * slotHeight;
-				branches[i].setPosition(trunkX, y);
-				if (branchPositions[i] == Side::LEFT) 
+				float branchY = baseY - ((NUM_BRANCHES - 1 - i)* slotHeight);
+
+				if (branchPositions[i] == Side::LEFT) {
+					branches[i].setPosition(trunkX - -62.0f, branchY);
 					branches[i].setRotation(180);
-				else 
+				}
+				else if (branchPositions[i] == Side::RIGHT) {
+					branches[i].setPosition(trunkX + 366.0f, branchY);
 					branches[i].setRotation(0);
+				}
 				window.draw(branches[i]);
 			}
 		}
