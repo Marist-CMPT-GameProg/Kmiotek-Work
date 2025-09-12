@@ -26,14 +26,14 @@ void updateBranches(int seed) {
 		branchPositions[0] = Side::NONE;
 	}
 }
-// Game Start
+// Game Start 
 int main()
 {
 	// Create a video mode object
 	VideoMode vm(1920, 1080);
 
 	// Create and open game window
-	RenderWindow window(vm, "Timber!", Style::Default);	
+	RenderWindow window(vm, "Timber!", Style::Default);
 
 	// Create a texture to hold a graphic on the GPU
 	Texture textureBackground;
@@ -53,14 +53,14 @@ int main()
 	//Creating tree sprite
 	Texture textureTree;
 	textureTree.loadFromFile("graphics/tree.png");
-		Sprite spriteTree;
+	Sprite spriteTree;
 	spriteTree.setTexture(textureTree);
 	spriteTree.setPosition(810, 0);
 
 	//Creating the bee
 	Texture textureBee;
 	textureBee.loadFromFile("graphics/bee.png");
-		Sprite spriteBee;
+	Sprite spriteBee;
 	spriteBee.setTexture(textureBee);
 	spriteBee.setPosition(0, 800);
 
@@ -132,7 +132,7 @@ int main()
 			playerSide = Side::RIGHT;
 			score++;
 			timeRemaining += .15f;
-				spritePlayer.setPosition(1200, 720);
+			spritePlayer.setPosition(1200, 720);
 			updateBranches(score);
 		}
 
@@ -142,9 +142,9 @@ int main()
 			playerSide = Side::LEFT;
 			score++;
 			timeRemaining += .15f;
-				spritePlayer.setPosition(580, 720);
+			spritePlayer.setPosition(580, 720);
 			updateBranches(score);
-		}	
+		}
 
 		//Duck to avoid bee obstacle
 		if (Keyboard::isKeyPressed(Keyboard::Down))
@@ -157,7 +157,7 @@ int main()
 		timeRemaining -= dt.asSeconds();
 		if (timeRemaining <= 0) {
 			timeRemaining = 0;
-			window.close();	
+			window.close();
 		}
 		//Setup bee
 		if (!beeActive)
@@ -263,26 +263,27 @@ int main()
 				cloud3Active = false;
 			}
 		}
-	}   if (branchPositions[NUM_BRANCHES - 1] == playerSide) {
-		//Game over
-		window.close();
-	    }
-	if (spriteBee.getGlobalBounds().intersects(spritePlayer.getGlobalBounds())) {
-		//Game over
-		window.close();
-	}
-	//Drawing scene
+		if (branchPositions[NUM_BRANCHES - 1] == playerSide) {
+			//Game over
+			window.close();
+		}
+		if (spriteBee.getGlobalBounds().intersects(spritePlayer.getGlobalBounds())) {
+			//Game over
+			window.close();
+		}
+
+		//Drawing scene
 		window.clear();
 		window.draw(spriteBackground);
 		window.draw(spriteCloud1);
 		window.draw(spriteCloud2);
 		window.draw(spriteCloud3);
 		window.draw(spriteTree);
+
 		//Draw tree branches
-		for (int i = 0; i < NUM_BRANCHES; i++){
-			if (branchPositions[i] != Side::NONE){
+		for (int i = 0; i < NUM_BRANCHES; i++) {
+			if (branchPositions[i] != Side::NONE) {
 				branches[i].setPosition(810, (i * 150));
-				
 				if (branchPositions[i] == Side::LEFT) {
 					branches[i].setRotation(180);
 				}
@@ -297,7 +298,8 @@ int main()
 		//Draw the bee
 		window.draw(spriteBee);
 		window.display();
-
-		return 0;
+	}
+	return 0;
 }
+
 
