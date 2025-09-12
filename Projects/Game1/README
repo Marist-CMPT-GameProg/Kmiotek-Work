@@ -8,7 +8,7 @@ The theme of this game is simple. You are a lumberjack, and you must chop the tr
 
 **Summary of Gameplay Loop**
 
-The gameplay loop of Timber!!! is also relatively simple, as it is meant to be a starting point for new game programmers like myself. The loop consists of starting the game, chopping the tree infront of you to collect as many logs as possible within the given time, and dodging obstacles such as falling branches and a pesky bee along the way, all while enjoing the scenary and audio of the game. 
+The gameplay loop of Timber!!! is also relatively simple, as it is meant to be a starting point for new game programmers like myself. The loop consists of starting the game, chopping the tree infront of you to collect as many logs as possible within the given time, and dodging obstacles such as falling branches and a pesky bee along the way, all while enjoing the scenary and audio of the game. Getting hit by an obstacle causes the game to end, where the players score and time remaining will appear on screen. Players can press the ESCAPE key to restart the game and try again. 
 
 **Statement of Goal/Objective**
 
