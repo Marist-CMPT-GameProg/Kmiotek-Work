@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <sstream>
+#include <iostream>
 
 using namespace sf;
 using namespace std;
@@ -100,6 +101,7 @@ int main()
 	{
 		branches[i].setTexture(textureBranch);
 		branches[i].setOrigin(220, 20);
+		branchPositions[i] = Side::NONE; 
 	}
 
 	//Player sprite
@@ -113,13 +115,21 @@ int main()
 	//Game state variables
 	int score = 0;
 	float timeRemaining = 10.0f;
-	Side playerSide = Side::LEFT;
+	Side playerSide = Side::LEFT; \
+		bool started = false;
 
 	//Time variables
 	Clock clock;
 
 	while (window.isOpen())
 	{
+		Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == Event::Closed)
+				window.close();
+		}
+
 		//Track player input
 		if (Keyboard::isKeyPressed(Keyboard::Escape))
 		{
@@ -131,6 +141,7 @@ int main()
 		{
 			playerSide = Side::RIGHT;
 			score++;
+			started = true;
 			timeRemaining += .15f;
 			spritePlayer.setPosition(1200, 720);
 			updateBranches(score);
@@ -155,8 +166,8 @@ int main()
 		//Measure time
 		Time dt = clock.restart();
 		timeRemaining -= dt.asSeconds();
+		std::cout << "dt: " << dt.asSeconds() << " timeRemaining: " << timeRemaining << "\n";
 		if (timeRemaining <= 0) {
-			timeRemaining = 0;
 			window.close();
 		}
 		//Setup bee
@@ -175,8 +186,7 @@ int main()
 		{
 			//Move bee
 			spriteBee.setPosition(
-				spriteBee.getPosition().x -
-				(beeSpeed * dt.asSeconds()),
+				spriteBee.getPosition().x - (beeSpeed * dt.asSeconds()),
 				spriteBee.getPosition().y);
 
 			//Set new bee to appear if current bee reaches left edge of the screen
@@ -193,7 +203,6 @@ int main()
 			srand((int)time(0) * 10);
 			cloud1Speed = (rand() % 200);
 			//Cloud 1 height
-			srand((int)time(0) * 10);
 			float height = (rand() % 150);
 			spriteCloud1.setPosition(-200, height);
 			cloud1Active = true;
@@ -202,8 +211,7 @@ int main()
 		{
 			//Move cloud 1
 			spriteCloud1.setPosition(
-				spriteCloud1.getPosition().x +
-				(cloud1Speed * dt.asSeconds()),
+				spriteCloud1.getPosition().x + (cloud1Speed * dt.asSeconds()),
 				spriteCloud1.getPosition().y);
 			//Set new cloud to appear if cloud 1 reaches right edge of the screen
 			if (spriteCloud1.getPosition().x > 1920)
@@ -219,7 +227,6 @@ int main()
 			srand((int)time(0) * 20);
 			cloud2Speed = (rand() % 200);
 			//Cloud 2 height
-			srand((int)time(0) * 20);
 			float height = (rand() % 300) - 150;
 			spriteCloud2.setPosition(-200, height);
 			cloud2Active = true;
@@ -228,8 +235,7 @@ int main()
 		{
 			//Move cloud 2
 			spriteCloud2.setPosition(
-				spriteCloud2.getPosition().x +
-				(cloud2Speed * dt.asSeconds()),
+				spriteCloud2.getPosition().x + (cloud2Speed * dt.asSeconds()),
 				spriteCloud2.getPosition().y);
 			//Set new cloud to appear if cloud 2 reaches right edge of the screen
 			if (spriteCloud2.getPosition().x > 1920)
@@ -245,7 +251,6 @@ int main()
 			srand((int)time(0) * 30);
 			cloud3Speed = (rand() % 200);
 			//Cloud 3 height
-			srand((int)time(0) * 30);
 			float height = (rand() % 450) - 150;
 			spriteCloud3.setPosition(-200, height);
 			cloud3Active = true;
@@ -254,8 +259,7 @@ int main()
 		{
 			//Move cloud 3
 			spriteCloud3.setPosition(
-				spriteCloud3.getPosition().x +
-				(cloud3Speed * dt.asSeconds()),
+				spriteCloud3.getPosition().x + (cloud3Speed * dt.asSeconds()),
 				spriteCloud3.getPosition().y);
 			//Set new cloud to appear if cloud 3 reaches right edge of the screen
 			if (spriteCloud3.getPosition().x > 1920)
@@ -263,12 +267,15 @@ int main()
 				cloud3Active = false;
 			}
 		}
-		if (branchPositions[NUM_BRANCHES - 1] == playerSide) {
+		if (started && branchPositions[NUM_BRANCHES - 1] == playerSide) {
 			//Game over
+			cout << "Closed: branch collision\n";
 			window.close();
 		}
-		if (spriteBee.getGlobalBounds().intersects(spritePlayer.getGlobalBounds())) {
+		if (beeActive && spriteBee.getPosition().x < 1900 &&
+			spriteBee.getGlobalBounds().intersects(spritePlayer.getGlobalBounds())) {
 			//Game over
+			cout << "Closed: bee collision\n";
 			window.close();
 		}
 
