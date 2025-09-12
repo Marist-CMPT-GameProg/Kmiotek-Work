@@ -58,15 +58,15 @@ int main()
 	textureTree.loadFromFile("graphics/tree.png");
 	Sprite spriteTree;
 	spriteTree.setTexture(textureTree);
-	spriteTree.setScale(0.5f, 0.5f);
-	spriteTree.setPosition(810, 100);
+	spriteTree.setScale(1.0f, 1.0f);
+	spriteTree.setPosition(860, 200);
 
 	//Creating the bee
 	Texture textureBee;
 	textureBee.loadFromFile("graphics/bee.png");
 	Sprite spriteBee;
 	spriteBee.setTexture(textureBee);
-	spriteBee.setScale(0.5f, 0.5f);	
+	spriteBee.setScale(0.2f, 0.2f);	
 	spriteBee.setPosition(2000, 800);
 
 	bool beeActive = false;
@@ -78,13 +78,13 @@ int main()
 	textureCloud.loadFromFile("graphics/cloud.png");
 	Sprite spriteCloud1;
 	spriteCloud1.setTexture(textureCloud);
-	spriteCloud1.setScale(0.7f, 0.7f);
+	spriteCloud1.setScale(0.4f, 0.4f);
 	Sprite spriteCloud2;
 	spriteCloud2.setTexture(textureCloud);
-	spriteCloud2.setScale(0.7f, 0.7f);
+	spriteCloud2.setScale(0.4f, 0.4f);
 	Sprite spriteCloud3;
 	spriteCloud3.setTexture(textureCloud);
-	spriteCloud3.setScale(0.7f, 0.7f);
+	spriteCloud3.setScale(0.4f, 0.4f);
 
 	//Positioning clouds on screen at different heights
 	spriteCloud1.setPosition(0, 0);
@@ -107,7 +107,7 @@ int main()
 	for (int i = 0; i < NUM_BRANCHES; i++)
 	{
 		branches[i].setTexture(textureBranch);
-		branches[i].setScale(0.5f, 0.5f);
+		branches[i].setScale(0.7f, 0.7f);
 		branches[i].setOrigin(220, 20);
 		branchPositions[i] = Side::NONE; 
 	}
@@ -118,7 +118,7 @@ int main()
 	Sprite spritePlayer;
 	spritePlayer.setTexture(texturePlayer);
 	//Set player scale
-	spritePlayer.setScale(0.4f, 0.4f);
+	spritePlayer.setScale(0.8f, 0.8f);
 	//Starts player on left side of screen
 	spritePlayer.setPosition(580, 720);
 
