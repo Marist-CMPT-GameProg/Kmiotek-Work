@@ -155,7 +155,7 @@ int main()
 	textureGravestone.loadFromFile("graphics/gravestone.png");
 	Sprite spriteGravestone(textureGravestone);
 	spriteGravestone.setScale(0.5f, 0.5f);
-	spriteGravestone.setPosition(580, 700);
+	
 
 	//Chopped log sprite
 	Texture textureLog;
@@ -163,7 +163,7 @@ int main()
 	Sprite spriteLog(textureLog);
 	spriteLog.setScale(1.5f, 1.5f);
 	bool logActive = false;
-	float logSpeedX = 1000.0f, logSpeedY = -500.0f;
+	float logSpeedX = 0, logSpeedY = 0;
 
 	//Text font
 	Font font; font.loadFromFile("graphics/font.ttf");
@@ -177,17 +177,10 @@ int main()
 	int score = 0;
 	float countdownTime = 5.0f;
 	float timeRemaining = 10.0f; 
-		bool playerDead = false;
-		bool isDucking = false;
-		const float playerGroundY = 700.f;
+	bool playerDead = false;
+	bool isDucking = false;
+	const float playerGroundY = 700.f;
 	Clock clock;
-
-	//Make branches align with trunk
-	const float trunkX = 860.0f + 35.0f;
-	//Make base of tree ground level
-	const float baseY = 720.0f;
-	//Distance between each branch
-	const float slotHeight = 150.0f;
 
 	SoundBuffer windBuffer;
 	windBuffer.loadFromFile("sound/wind.wav");
@@ -208,18 +201,30 @@ int main()
 	Sound beeSound;
 	beeSound.setBuffer(beeBuffer);
 
+	//Game loop
 	while (window.isOpen())
 	{
+		//Handle time
 		Time dt = clock.restart();
 		float delta = dt.asSeconds();
 		if (gameState == GameState::COUNTDOWN) {
 			countdownTime -= delta;
-			if (countdownTime <= 0) {
+			if (countdownTime <= 0.f) {
 				gameState = GameState::PLAYING;
 				acceptInput = true;
+				timeRemaining = 15.0f;
 			}
 		}
 		else if (gameState == GameState::PLAYING) {
+			if (!playerDead) {
+				timeRemaining -= delta;
+				if(timeRemaining <= 0.f) {
+					timeRemaining = 0.0f;
+					playerDead = true;
+					gameState = GameState::GAMEOVER;
+					spriteGravestone.setPosition(spritePlayer.getPosition().x, spritePlayer.getPosition().y);
+				}
+			}
 			if (!playerDead && currentBranchSlot == NUM_BRANCHES - 1 && currentBranchSide == playerSide)
 			{
 				playerDead = true;
@@ -237,7 +242,11 @@ int main()
 				gameState = GameState::COUNTDOWN;
 				countdownTime = 5.f;
 				timeRemaining = 15.f;
-				score = 0; playerDead = false;
+				score = 0;
+				playerDead = false;
+				isDucking = false;
+				logActive = false;
+				beeActive = false;
 				playerSide = Side::LEFT;
 
 				currentBranchSlot = -1;
@@ -251,14 +260,17 @@ int main()
 				clock.restart();
 			}
 
-			if (event.type == Event::KeyReleased && !playerDead)
+			if (gameState == GameState::PLAYING &&
+				!playerDead &&
+				event.type == Event::KeyReleased)
 			{
 				//Actions
 				if (event.key.code == Keyboard::Right) {
 					//Chop to the right
 					playerSide = Side::RIGHT;
 					score++;
-					timeRemaining += 0.15f;
+					timeRemaining += 0.05f;
+					if (timeRemaining > 15.0f) timeRemaining = 15.0f;
 					spritePlayer.setPosition(1200, 720);
 					updateBranches(score);
 					
@@ -271,7 +283,8 @@ int main()
 					//Chop to the left
 					playerSide = Side::LEFT;
 					score++;
-					timeRemaining += .15f;
+					timeRemaining += 0.05f;
+					if (timeRemaining > 15.0f) timeRemaining = 15.0f;
 					spritePlayer.setPosition(580, 720);
 					updateBranches(score);
 
@@ -315,10 +328,8 @@ int main()
 		{
 			if (!beeActive)
 			{
-				srand((int)time(0));
 				beeSpeed = (rand() % 200) + 200;
 				//Bee height
-				srand((int)time(0) * 10);
 				float height = 630.f;
 				spriteBee.setPosition(2000, height);
 				beeActive = true;
@@ -347,7 +358,6 @@ int main()
 		if (!cloud1Active)
 		{
 			//Cloud 1 speed
-			srand((int)time(0) * 10);
 			cloud1Speed = (rand() % 200);
 			//Cloud 1 height
 			float height = (rand() % 150);
@@ -371,7 +381,6 @@ int main()
 		if (!cloud2Active)
 		{
 			//Cloud 2 speed
-			srand((int)time(0) * 20);
 			cloud2Speed = (rand() % 200);
 			//Cloud 2 height
 			float height = (rand() % 300) - 150;
@@ -395,7 +404,6 @@ int main()
 		if (!cloud3Active)
 		{
 			//Cloud 3 speed
-			srand((int)time(0) * 30);
 			cloud3Speed = (rand() % 200);
 			//Cloud 3 height
 			float height = (rand() % 450) - 150;
@@ -477,10 +485,10 @@ int main()
 			scoreText.setString(scoreSS.str());
 			scoreText.setPosition(20, 80);
 			window.draw(scoreText);
-		}
+		}    
 		else if (gameState == GameState::GAMEOVER) {
 			gameOverText.setString("GAME OVER\nScore: " + to_string(score) + "\nPress ESC to Restart");
-			gameOverText.setPosition(500, 400);
+			gameOverText.setPosition(300, 200);
 			//Display game over text
 			window.draw(gameOverText);
 			//Draw gravestone
