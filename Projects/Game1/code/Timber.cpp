@@ -1,6 +1,5 @@
 #include <SFML/Graphics.hpp>
 #include <sstream>
-#include <iostream>
 
 using namespace sf;
 using namespace std;
@@ -48,7 +47,10 @@ int main()
 	// Attaching a texture to the sprite
 	spriteBackground.setTexture(textureBackground);
 
-	//Setting spriteBackground to cover screen
+	//Set fixed sizes for background
+	spriteBackground.setScale(
+		1920.0f / textureBackground.getSize().x,
+		1080.0f / textureBackground.getSize().y);
 	spriteBackground.setPosition(0, 0);
 
 	//Creating tree sprite
@@ -56,14 +58,16 @@ int main()
 	textureTree.loadFromFile("graphics/tree.png");
 	Sprite spriteTree;
 	spriteTree.setTexture(textureTree);
-	spriteTree.setPosition(810, 0);
+	spriteTree.setScale(0.5f, 0.5f);
+	spriteTree.setPosition(810, 100);
 
 	//Creating the bee
 	Texture textureBee;
 	textureBee.loadFromFile("graphics/bee.png");
 	Sprite spriteBee;
 	spriteBee.setTexture(textureBee);
-	spriteBee.setPosition(0, 800);
+	spriteBee.setScale(0.5f, 0.5f);	
+	spriteBee.setPosition(2000, 800);
 
 	bool beeActive = false;
 	//Set bee speed
@@ -74,10 +78,13 @@ int main()
 	textureCloud.loadFromFile("graphics/cloud.png");
 	Sprite spriteCloud1;
 	spriteCloud1.setTexture(textureCloud);
+	spriteCloud1.setScale(0.7f, 0.7f);
 	Sprite spriteCloud2;
 	spriteCloud2.setTexture(textureCloud);
+	spriteCloud2.setScale(0.7f, 0.7f);
 	Sprite spriteCloud3;
 	spriteCloud3.setTexture(textureCloud);
+	spriteCloud3.setScale(0.7f, 0.7f);
 
 	//Positioning clouds on screen at different heights
 	spriteCloud1.setPosition(0, 0);
@@ -100,22 +107,25 @@ int main()
 	for (int i = 0; i < NUM_BRANCHES; i++)
 	{
 		branches[i].setTexture(textureBranch);
+		branches[i].setScale(0.5f, 0.5f);
 		branches[i].setOrigin(220, 20);
 		branchPositions[i] = Side::NONE; 
 	}
 
 	//Player sprite
-	Texture texPlayer;
-	texPlayer.loadFromFile("graphics/player.png");
+	Texture texturePlayer;
+	texturePlayer.loadFromFile("graphics/player.png");
 	Sprite spritePlayer;
-	spritePlayer.setTexture(texPlayer);
+	spritePlayer.setTexture(texturePlayer);
+	//Set player scale
+	spritePlayer.setScale(0.4f, 0.4f);
 	//Starts player on left side of screen
 	spritePlayer.setPosition(580, 720);
 
 	//Game state variables
 	int score = 0;
 	float timeRemaining = 10.0f;
-	Side playerSide = Side::LEFT; \
+	Side playerSide = Side::LEFT; 
 		bool started = false;
 
 	//Time variables
@@ -152,6 +162,7 @@ int main()
 		{
 			playerSide = Side::LEFT;
 			score++;
+			started = true;
 			timeRemaining += .15f;
 			spritePlayer.setPosition(580, 720);
 			updateBranches(score);
@@ -166,7 +177,6 @@ int main()
 		//Measure time
 		Time dt = clock.restart();
 		timeRemaining -= dt.asSeconds();
-		std::cout << "dt: " << dt.asSeconds() << " timeRemaining: " << timeRemaining << "\n";
 		if (timeRemaining <= 0) {
 			window.close();
 		}
@@ -175,7 +185,6 @@ int main()
 		{
 			srand((int)time(0));
 			beeSpeed = (rand() % 200) + 200;
-
 			//Bee height
 			srand((int)time(0) * 10);
 			float height = (rand() % 500) + 500;
@@ -269,13 +278,11 @@ int main()
 		}
 		if (started && branchPositions[NUM_BRANCHES - 1] == playerSide) {
 			//Game over
-			cout << "Closed: branch collision\n";
 			window.close();
 		}
 		if (beeActive && spriteBee.getPosition().x < 1900 &&
 			spriteBee.getGlobalBounds().intersects(spritePlayer.getGlobalBounds())) {
 			//Game over
-			cout << "Closed: bee collision\n";
 			window.close();
 		}
 
@@ -290,7 +297,7 @@ int main()
 		//Draw tree branches
 		for (int i = 0; i < NUM_BRANCHES; i++) {
 			if (branchPositions[i] != Side::NONE) {
-				branches[i].setPosition(810, (i * 150));
+				branches[i].setPosition(810, i * 150);
 				if (branchPositions[i] == Side::LEFT) {
 					branches[i].setRotation(180);
 				}
