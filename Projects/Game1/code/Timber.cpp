@@ -1,33 +1,58 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 #include <sstream>
 
 using namespace sf;
 using namespace std;
 
-//Creating branches on tree
-const int NUM_BRANCHES = 6;
 //Branch sprites
+const int NUM_BRANCHES = 6;
 Sprite branches[NUM_BRANCHES];
 enum class Side { LEFT, RIGHT, NONE };
 Side branchPositions[NUM_BRANCHES];
+int currentBranchSlot = -1;
+Side currentBranchSide = Side::NONE;
 
 //Function to create new branches as old ones are chopped off
 void updateBranches(int seed) {
-	for (int j = NUM_BRANCHES - 1; j > 0; j--) {
-		branchPositions[j] = branchPositions[j - 1];
+	for (int i = 0; i < NUM_BRANCHES; ++i)
+		branchPositions[i] = Side::NONE;
+
+	if (currentBranchSlot == -1) {
+		srand((int)time(0) + seed);
+		int r = rand() % 3;         
+		if (r == 0) {
+			currentBranchSide = Side::LEFT;
+			currentBranchSlot = 0;
+		}
+		else if (r == 1) {
+			currentBranchSide = Side::RIGHT;
+			currentBranchSlot = 0;
+		}
+		else {
+			currentBranchSide = Side::NONE; 
+			currentBranchSlot = -1;
+		}
 	}
-	srand((int)time(0) + seed);
-	int r = rand() % 3;
-	if (r == 0) {
-		branchPositions[0] = Side::LEFT;
-	} else if(r == 1) {
-		branchPositions[0] = Side::RIGHT;
-	} else {
-		branchPositions[0] = Side::NONE;
+	else {
+		//Move existing branch down one slot
+		currentBranchSlot++;
+
+		//Remove bottom branches
+		if (currentBranchSlot >= NUM_BRANCHES) {
+			currentBranchSlot = -1;
+			currentBranchSide = Side::NONE;
+		}
+	}
+	if (currentBranchSlot >= 0 && currentBranchSide != Side::NONE) {
+		branchPositions[currentBranchSlot] = currentBranchSide;
 	}
 }
+
+enum class GameState { COUNTDOWN, PLAYING, GAMEOVER };
+GameState gameState = GameState::COUNTDOWN;
 Side playerSide = Side::LEFT;
-bool acceptInput = true;
+bool acceptInput = false;
 // Game Start 
 int main()
 {
@@ -73,7 +98,7 @@ int main()
 
 	bool beeActive = false;
 	//Set bee speed
-	float beeSpeed = 0.0f;
+	float beeSpeed = -10.0f;
 
 	//Making cloud sprites
 	Texture textureCloud;
@@ -106,7 +131,7 @@ int main()
 	//Textures for branches 
 	Texture textureBranch;
 	textureBranch.loadFromFile("graphics/branch.png");
-	for (int i = 0; i < NUM_BRANCHES; ++i)
+	for (int i = 0; i < NUM_BRANCHES; i++)
 	{
 		branches[i].setTexture(textureBranch);
 		branches[i].setScale(0.7f, 0.7f);
@@ -139,8 +164,17 @@ int main()
 	bool logActive = false;
 	float logSpeedX = 1000.0f, logSpeedY = -500.0f;
 
+	//Text font
+	Font font; font.loadFromFile("graphics/font.ttf");
+	Text countdownText, timerText, scoreText, gameOverText;
+	countdownText.setFont(font); countdownText.setCharacterSize(100); countdownText.setFillColor(Color::Black);
+	timerText.setFont(font); timerText.setCharacterSize(75); timerText.setFillColor(Color::Black);
+	scoreText.setFont(font); scoreText.setCharacterSize(75); scoreText.setFillColor(Color::Black);
+	gameOverText.setFont(font); gameOverText.setCharacterSize(150); gameOverText.setFillColor(Color::Red);
+
 	//Game state variables
 	int score = 0;
+	float countdownTime = 5.0f;
 	float timeRemaining = 10.0f; 
 		bool playerDead = false;
 		bool isDucking = false;
@@ -156,11 +190,47 @@ int main()
 
 	while (window.isOpen())
 	{
+		Time dt = clock.restart();
+		float delta = dt.asSeconds();
+		if (gameState == GameState::COUNTDOWN) {
+			countdownTime -= delta;
+			if (countdownTime <= 0) {
+				gameState = GameState::PLAYING;
+				acceptInput = true;
+			}
+		}
+		else if (gameState == GameState::PLAYING) {
+			if (!playerDead && currentBranchSlot == NUM_BRANCHES - 1 && currentBranchSide == playerSide)
+			{
+				playerDead = true;
+				gameState = GameState::GAMEOVER;
+				spriteGravestone.setPosition(spritePlayer.getPosition().x, spritePlayer.getPosition().y);
+			}
+		}
 		Event event;
 		while (window.pollEvent(event))
 		{
 			if (event.type == Event::Closed)
 				window.close();
+			if (gameState == GameState::GAMEOVER && event.type == Event::KeyPressed && event.key.code == Keyboard::Escape) {
+				//Restarts game
+				gameState = GameState::COUNTDOWN;
+				countdownTime = 5.f;
+				timeRemaining = 15.f;
+				score = 0; playerDead = false;
+				playerSide = Side::LEFT;
+
+				currentBranchSlot = -1;
+				currentBranchSide = Side::NONE;
+				for (int i = 0; i < NUM_BRANCHES; i++) branchPositions[i] = Side::NONE;
+
+				spritePlayer.setPosition(580, 700);
+				spriteGravestone.setPosition(-2000, -2000);
+				acceptInput = false; isDucking = false;
+				logActive = false; beeActive = false;
+				clock.restart();
+			}
+
 			if (event.type == Event::KeyReleased && !playerDead)
 			{
 				//Actions
@@ -175,8 +245,7 @@ int main()
 					//Set log to fly out
 					logActive = true;
 					spriteLog.setPosition(860, 720);
-					logSpeedX = 1000.0f;
-					logSpeedY = -500.0f;
+					logSpeedX = 2000.f; logSpeedY = -1500.f;
 				}
 				else if (event.key.code == Keyboard::Left) {
 					//Chop to the left
@@ -188,25 +257,16 @@ int main()
 
 					logActive = true;
 					spriteLog.setPosition(860, 720);
-					logSpeedX = -1000.0f;
-					logSpeedY = -500.0f;
+					logSpeedX = -2000.f; logSpeedY = -1500.f;
 				}
 			
 			}
 		}
-
-		Time dt = clock.restart();
-		if (!playerDead) timeRemaining -= dt.asSeconds();
-		if (timeRemaining <= 0 && !playerDead) {
-			playerDead = true;
-		}
-
-		//Move log
 		if (logActive) {
-			spriteLog.setPosition(
-				spriteLog.getPosition().x + logSpeedX * dt.asSeconds(),
-				spriteLog.getPosition().y + logSpeedY * dt.asSeconds());
-			if (spriteLog.getPosition().x < 0 || spriteLog.getPosition().x>1920) {
+			spriteLog.move(logSpeedX * delta, logSpeedY * delta);
+			logSpeedY += 3000.f * delta; 
+			if (spriteLog.getPosition().x < -100 || spriteLog.getPosition().x > 2100 ||
+				spriteLog.getPosition().y > 1200) {
 				logActive = false;
 			}
 		}
@@ -229,27 +289,30 @@ int main()
 		}
 
 		//Setup bee
-		if (!beeActive)
+		if (gameState == GameState::PLAYING)
 		{
-			srand((int)time(0));
-			beeSpeed = (rand() % 200) + 200;
-			//Bee height
-			srand((int)time(0) * 10);
-			float height = 630.f;
-			spriteBee.setPosition(2000, height);
-			beeActive = true;
-		}
-		else
-		{
-			//Move bee
-			spriteBee.setPosition(
-				spriteBee.getPosition().x - (beeSpeed * dt.asSeconds()),
-				spriteBee.getPosition().y);
-
-			//Set new bee to appear if current bee reaches left edge of the screen
-			if (spriteBee.getPosition().x < -100)
+			if (!beeActive)
 			{
-				beeActive = false;
+				srand((int)time(0));
+				beeSpeed = (rand() % 200) + 200;
+				//Bee height
+				srand((int)time(0) * 10);
+				float height = 630.f;
+				spriteBee.setPosition(2000, height);
+				beeActive = true;
+			}
+			else
+			{
+				//Move bee
+				spriteBee.setPosition(
+					spriteBee.getPosition().x - (beeSpeed * delta),
+					spriteBee.getPosition().y);
+
+				//Set new bee to appear if current bee reaches left edge of the screen
+				if (spriteBee.getPosition().x < -100)
+				{
+					beeActive = false;
+				}
 			}
 		}
 		//Managing clouds
@@ -268,7 +331,7 @@ int main()
 		{
 			//Move cloud 1
 			spriteCloud1.setPosition(
-				spriteCloud1.getPosition().x + (cloud1Speed * dt.asSeconds()),
+				spriteCloud1.getPosition().x + (cloud1Speed * delta),
 				spriteCloud1.getPosition().y);
 			//Set new cloud to appear if cloud 1 reaches right edge of the screen
 			if (spriteCloud1.getPosition().x > 1920)
@@ -292,7 +355,7 @@ int main()
 		{
 			//Move cloud 2
 			spriteCloud2.setPosition(
-				spriteCloud2.getPosition().x + (cloud2Speed * dt.asSeconds()),
+				spriteCloud2.getPosition().x + (cloud2Speed * delta),
 				spriteCloud2.getPosition().y);
 			//Set new cloud to appear if cloud 2 reaches right edge of the screen
 			if (spriteCloud2.getPosition().x > 1920)
@@ -316,7 +379,7 @@ int main()
 		{
 			//Move cloud 3
 			spriteCloud3.setPosition(
-				spriteCloud3.getPosition().x + (cloud3Speed * dt.asSeconds()),
+				spriteCloud3.getPosition().x + (cloud3Speed * delta),
 				spriteCloud3.getPosition().y);
 			//Set new cloud to appear if cloud 3 reaches right edge of the screen
 			if (spriteCloud3.getPosition().x > 1920)
@@ -325,17 +388,19 @@ int main()
 			}
 		}
 		//Obstacles
-		if (!playerDead && branchPositions[NUM_BRANCHES - 1] == playerSide) {
+		if (!playerDead && currentBranchSlot == NUM_BRANCHES - 1 &&
+			currentBranchSide == playerSide){
 			//Game over
 			playerDead = true;
-			spritePlayer.setPosition(2000, 720);
-			spriteGravestone.setPosition(580, 720);
+			gameState = GameState::GAMEOVER;
+			//Position gravestone
+			spriteGravestone.setPosition(spritePlayer.getPosition().x, spritePlayer.getPosition().y);
 		}
 		if (!playerDead && spriteBee.getGlobalBounds().intersects(spritePlayer.getGlobalBounds())) {
 			//Game over
 			playerDead = true;
-			spritePlayer.setPosition(2000, 720);
-			spriteGravestone.setPosition(580, 720);
+			gameState = GameState::GAMEOVER;
+			spriteGravestone.setPosition(spritePlayer.getPosition().x, spritePlayer.getPosition().y);
 		}
 
 		//Drawing scene
@@ -351,24 +416,49 @@ int main()
 		const float baseY = 720.0f;
 		const float slotHeight = 250.0f;
 
-		for (int i = 0; i < NUM_BRANCHES; ++i) {
+		for (int i = 0; i < NUM_BRANCHES; i++) {
+			float branchY = baseY - ((NUM_BRANCHES - 1 - i) * slotHeight);
 			if (branchPositions[i] != Side::NONE) {
-				float branchY = baseY - ((NUM_BRANCHES - 1 - i)* slotHeight);
-
 				if (branchPositions[i] == Side::LEFT) {
-					branches[i].setPosition(trunkX - -62.0f, branchY);
+					branches[i].setPosition(trunkX - -63.f, branchY);
 					branches[i].setRotation(180);
 				}
-				else if (branchPositions[i] == Side::RIGHT) {
-					branches[i].setPosition(trunkX + 366.0f, branchY);
+				else {
+					branches[i].setPosition(trunkX + 366.f, branchY);
 					branches[i].setRotation(0);
 				}
 				window.draw(branches[i]);
 			}
 		}
-		//Draw the player and gravestone
-		if(!playerDead) window.draw(spritePlayer);
-		else window.draw(spriteGravestone);
+		if (gameState != GameState::GAMEOVER) {
+			window.draw(spritePlayer);
+		}
+		
+		if (gameState == GameState::COUNTDOWN) {
+			stringstream ss; ss << "Get Ready: " << int(countdownTime + 1);
+			countdownText.setString(ss.str());
+			countdownText.setPosition(700, 500);
+			window.draw(countdownText);
+		}
+		else if (gameState == GameState::PLAYING) {
+			stringstream timeSS; timeSS << "Time: " << int(timeRemaining);
+			timerText.setString(timeSS.str());
+			timerText.setPosition(20, 20);
+			window.draw(timerText);
+
+			stringstream scoreSS; scoreSS << "Score: " << score;
+			scoreText.setString(scoreSS.str());
+			scoreText.setPosition(20, 80);
+			window.draw(scoreText);
+		}
+		else if (gameState == GameState::GAMEOVER) {
+			gameOverText.setString("GAME OVER\nScore: " + to_string(score) + "\nPress ESC to Restart");
+			gameOverText.setPosition(500, 400);
+			//Display game over text
+			window.draw(gameOverText);
+			//Draw gravestone
+			window.draw(spriteGravestone);
+		}
 		//Draw the bee
 		window.draw(spriteBee);
 		//Draw the log
