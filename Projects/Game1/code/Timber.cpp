@@ -78,18 +78,18 @@ int main()
 	textureCloud.loadFromFile("graphics/cloud.png");
 	Sprite spriteCloud1;
 	spriteCloud1.setTexture(textureCloud);
-	spriteCloud1.setScale(0.4f, 0.4f);
+	spriteCloud1.setScale(0.2f, 0.2f);
 	Sprite spriteCloud2;
 	spriteCloud2.setTexture(textureCloud);
-	spriteCloud2.setScale(0.4f, 0.4f);
+	spriteCloud2.setScale(0.2f, 0.2f);
 	Sprite spriteCloud3;
 	spriteCloud3.setTexture(textureCloud);
-	spriteCloud3.setScale(0.4f, 0.4f);
+	spriteCloud3.setScale(0.2f, 0.2f);
 
 	//Positioning clouds on screen at different heights
-	spriteCloud1.setPosition(0, 0);
-	spriteCloud2.setPosition(0, 250);
-	spriteCloud3.setPosition(0, 500);
+	spriteCloud1.setPosition(0, 700);
+	spriteCloud2.setPosition(0, 900);
+	spriteCloud3.setPosition(0, 1000);
 
 	//Are the clouds on screen
 	bool cloud1Active = false;
