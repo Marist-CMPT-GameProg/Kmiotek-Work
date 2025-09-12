@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
+#include <SFML/Audio.hpp>
 #include <sstream>
 
 using namespace sf;
@@ -188,6 +189,25 @@ int main()
 	//Distance between each branch
 	const float slotHeight = 150.0f;
 
+	SoundBuffer windBuffer;
+	windBuffer.loadFromFile("sound/wind.wav");
+
+	Sound windSound;
+	windSound.setBuffer(windBuffer);
+	windSound.setLoop(true);
+	windSound.setVolume(40.f);
+	windSound.play();
+
+	SoundBuffer chopBuffer;
+	chopBuffer.loadFromFile("sound/chop.wav");
+	Sound chopSound;
+	chopSound.setBuffer(chopBuffer);
+
+	SoundBuffer beeBuffer;
+	beeBuffer.loadFromFile("sound/bee.wav");
+	Sound beeSound;
+	beeSound.setBuffer(beeBuffer);
+
 	while (window.isOpen())
 	{
 		Time dt = clock.restart();
@@ -260,6 +280,8 @@ int main()
 					logSpeedX = -2000.f; logSpeedY = -1500.f;
 				}
 			
+			}if (event.key.code == Keyboard::Right || event.key.code == Keyboard::Left) {
+				chopSound.play();
 			}
 		}
 		if (logActive) {
@@ -313,6 +335,11 @@ int main()
 				{
 					beeActive = false;
 				}
+			}
+			//Play bee sound
+			if (beeActive)
+			{
+				beeSound.play();
 			}
 		}
 		//Managing clouds
