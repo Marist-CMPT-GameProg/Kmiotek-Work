@@ -58,7 +58,7 @@ int main()
 	textureTree.loadFromFile("graphics/tree.png");
 	Sprite spriteTree;
 	spriteTree.setTexture(textureTree);
-	spriteTree.setScale(1.0f, 1.0f);
+	spriteTree.setScale(1.5f, 1.5f);
 	spriteTree.setPosition(860, 200);
 
 	//Creating the bee
