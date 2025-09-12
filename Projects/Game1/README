@@ -4,7 +4,7 @@ This is my projects README file, where I will describe how my iteration of Timbe
 
 **Statement of Concept/Theme**
 
-The theme of this game is simple. You are a lumberjack, and you must chop the tree infront of you and collect as many logs as possible within the 15 second time limit. This theme stems from the game "Timberman", which is available to play on steam. Some of the code used to in the beginning of the file was taken from John Horton's text book on game building in C++, titled "Beginning C++ Game Programming - Learn C++ from scratch by building fun games". Throughout chapters 1-5, Horton describes how to build a basic replica of "Timberman", which serves as a great tool for learning how to begin coding games using C++.
+The theme of this game is simple. You are a lumberjack, and you must chop the tree infront of you and collect as many logs as possible within the 15 second time limit. This theme stems from the game "Timberman", which is available to play on steam. Some of the code used in the beginning of the file was taken from John Horton's text book on game building in C++, titled "Beginning C++ Game Programming - Learn C++ from scratch by building fun games". Throughout chapters 1-5, Horton describes how to build a basic replica of "Timberman", which serves as a great tool for learning how to begin coding games using C++.
 
 **Summary of Gameplay Loop**
 
