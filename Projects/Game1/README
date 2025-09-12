@@ -8,15 +8,15 @@ The theme of this game is simple. You are a lumberjack, and you must chop the tr
 
 **Summary of Gameplay Loop**
 
-The gameplay loop of Timber is also relatively simple, as it is meant to be a starting point for new game programmers like myself. The loop consists of starting the game, chopping the tree infront of you to collect as many logs as possible within the given time, and dodging obstacles such as falling branches and a pesky bee along the way, all while enjoing the scenary and audio of the game. Getting hit by an obstacle causes the game to end, where the players score and time remaining will appear on screen. Players can press the ESCAPE key to restart the game and try again. 
+The gameplay loop of Timber is also relatively simple, as it is meant to be a starting point for new game programmers like myself. The loop consists of starting the game, chopping the tree infront of you to collect as many logs as possible within the given time, and dodging obstacles such as falling branches and a pesky bee along the way, all while enjoying the scenary and audio of the game. Getting hit by an obstacle causes the game to end, where the players score and time remaining will appear on screen. Players can press the ESCAPE key to restart the game and try again. 
 
 **Statement of Goal/Objective**
 
-My objective for creating this game was to learn from Horton's teachings and get a grasp on programming a 2D game for the first time. I have programmed basic text-based games in the past, but this was a new experience for me, and it took a ton of testing and debugging to get this game to finally run with basic playability. I regret not starting this project sooner, because I had to crunch hard to complete it by the due date. However, I believe my iteration of Timber meets the project requirements to the best of my ability, and I am proud of what I created. my goal now is to only go up from here, and i am looking forward to getting started on the next project.
+My objective for creating this game was to learn from Horton's teachings and get a grasp on programming a 2D game for the first time. I have programmed basic text-based games in the past, but this was a new experience for me, and it took a ton of testing and debugging to get this game to finally run with basic playability. I regret not starting this project sooner, because I had to crunch hard to complete it by the due date. However, I believe my iteration of Timber meets the project requirements to the best of my ability, and I am proud of what I created. My goal now is to only go up from here, and i am looking forward to getting started on the next project.
 
 **List of Player Actions**
 
-Player actions for this game include - Chopping Left, Chopping Right, and ducking. Players may press "ARROW DOWN' to duck, "ARROW LEFT" to chop the tree while standing on the left side, and "ARROW RIGHT" to chop the tree from the right side. There is no free movement in this game. Players chop the tree from two fixed positions.
+Player actions for this game include - Chopping Left, Chopping Right, and ducking. Players may press "ARROW DOWN' to duck, "ARROW LEFT" to chop the tree while standing on the left side, and "ARROW RIGHT" to chop the tree from the right side. There is no free movement in this game. Players chop the tree from two fixed positions. Hitting "ESC" on the game over screen restarts the game.
 
 **List of Hazards/Threats**
 
