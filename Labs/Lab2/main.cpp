@@ -12,13 +12,28 @@ float orbitRadius = 150.0f;
 float orbitSpeed = 1.5f;
 float orbitAngle = 0.f;
 
+enum class direction { CLOCKWISE, COUNTERCLOCKWISE };
+direction beeDirection = direction::CLOCKWISE;
+
 void updateBee(Sprite& bee, float dt) {
-	orbitAngle += orbitSpeed * dt;
+	if (beeDirection == direction::CLOCKWISE)
+		orbitAngle += orbitSpeed * dt;
+	else
+		orbitAngle -= orbitSpeed * dt;
 
 	float x = orbitCenter.x + orbitRadius * cos(orbitAngle);
 	float y = orbitCenter.y + orbitRadius * sin(orbitAngle);
 	bee.setPosition(x, y);
+
 }
+
+void changeBeeDirection() {
+	if (beeDirection == direction::CLOCKWISE)
+		beeDirection = direction::COUNTERCLOCKWISE;
+	else
+		beeDirection = direction::CLOCKWISE;
+}
+
 int main() {
 	RenderWindow window(VideoMode(500, 500), "Lab2 Window");
 
@@ -54,6 +69,9 @@ int main() {
 
 			if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape) 
 				window.close();
+
+			if (event.type == Event::KeyPressed && event.key.code == Keyboard::Space)
+				changeBeeDirection();
 		}
 
 		float dt = clock.restart().asSeconds();
