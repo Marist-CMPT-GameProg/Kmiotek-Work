@@ -2,37 +2,10 @@
 // PATH=..\..\SFML-2.6.2\bin;$(PATH)
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "Bee.hpp"
 
 using namespace std;
 using namespace sf;
-
-//Global bee orbit variables
-Vector2f orbitCenter(1024.f / 2.f, 1024.f / 2.f);
-float orbitRadius = 150.0f;
-float orbitSpeed = 1.5f;
-float orbitAngle = 0.f;
-
-enum class direction { CLOCKWISE, COUNTERCLOCKWISE };
-direction beeDirection = direction::CLOCKWISE;
-
-void updateBee(Sprite& bee, float dt) {
-	if (beeDirection == direction::CLOCKWISE)
-		orbitAngle += orbitSpeed * dt;
-	else
-		orbitAngle -= orbitSpeed * dt;
-
-	float x = orbitCenter.x + orbitRadius * cos(orbitAngle);
-	float y = orbitCenter.y + orbitRadius * sin(orbitAngle);
-	bee.setPosition(x, y);
-
-}
-
-void changeBeeDirection() {
-	if (beeDirection == direction::CLOCKWISE)
-		beeDirection = direction::COUNTERCLOCKWISE;
-	else
-		beeDirection = direction::CLOCKWISE;
-}
 
 int main() {
 	RenderWindow window(VideoMode(500, 500), "Lab2 Window");
@@ -49,14 +22,13 @@ int main() {
 
 	Texture textureBee;
 	textureBee.loadFromFile("resources/bee.png");
-	Sprite bee(textureBee);
+	Bee bee(textureBee);
 
 	sunflower.setPosition(
 		1024.f / 2.f - sunflower.getGlobalBounds().width / 2.f,
 		1024.f / 2.f - sunflower.getGlobalBounds().height / 2.f
 	);
 
-	updateBee(bee, 0.f);
 
 	View view(FloatRect(0.f, 0.f, 1024.f, 1024.f));
 	window.setView(view);
@@ -71,17 +43,16 @@ int main() {
 				window.close();
 
 			if (event.type == Event::KeyPressed && event.key.code == Keyboard::Space)
-				changeBeeDirection();
+				bee.changeDirection();
 		}
 
+		bee.updateBee(clock.getElapsedTime().asSeconds());
 		float dt = clock.restart().asSeconds();
-
-		updateBee(bee, dt);
 		
 		window.clear();
 		window.draw(grass);
 		window.draw(sunflower);
-		window.draw(bee);
+		window.draw(bee.getSprite());
 		window.display();
 	}
 	return 0;

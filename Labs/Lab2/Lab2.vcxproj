@@ -138,6 +138,9 @@
     <Image Include="resources\grass.png" />
     <Image Include="resources\sunflower.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Bee.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
