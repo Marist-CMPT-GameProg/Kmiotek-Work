@@ -1,4 +1,5 @@
 #include "Bat.h"
+#include "Ball.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
@@ -19,6 +20,8 @@ int main()
 
 	//Creating the bat and positioning at the bottom of the screen
 	Bat bat(1920 / 2, 1080 - 20);
+	//Creating the ball and positioning at the top of the screen
+	Ball ball(1920 / 2, 0);
 
 	//Text object
 	Text hud;
@@ -56,21 +59,57 @@ int main()
 			bat.stopRight();
 		}
 
-		//Update the bat, ball and hud
-		// 
 		//Update delta time
 		Time dt = clock.restart();
+		//Update the bat and ball
 		bat.update(dt);
+		ball.update(dt);
 
 		//Update HUD text
 		stringstream ss;
 		ss << "Score: " << score << "   Lives: " << lives;
 		hud.setString(ss.str());
 
+		//Handle ball hitting the bottom
+		if (ball.getPosition().top > window.getSize().y)
+		{
+			//Reverse the ball direction
+			ball.reboundBottom();
+			//Remove a life
+			lives--;
+			//Check if the player has run out of lives
+			if (lives < 1) {
+					//Reset score
+					score = 0;
+				//Reset lives
+				lives = 3;
+			}
+		}
+		//Handle ball hitting top
+		if (ball.getPosition().top < 0)
+		{
+			ball.reboundBatOrTop();
+			//Increase player score
+			score++;
+		}
+		//Handle ball hitting sides
+		if (ball.getPosition().left < 0 ||
+			ball.getPosition().left + ball.getPosition().width> window.
+			getSize().x)
+		{ball.reboundSides();
+		}
+		//Handle ball hitting bat
+		if (ball.getPosition().intersects(bat.getPosition()))
+		{
+			//Hit detected so reverse the ball and score a point
+			ball.reboundBatOrTop();
+		}
+
 		//Draw the bat, ball and hud
 		window.clear();
 		window.draw(hud);
 		window.draw(bat.getShape());
+		window.draw(ball.getShape());
 		window.display();
 
 	}
