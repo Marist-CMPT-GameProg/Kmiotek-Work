@@ -19,7 +19,7 @@ int main()
 	//Creating randomly generated events for each playthrough
 	srand(static_cast<unsigned>(time(nullptr)));
 	//Creating video mode object
-	VideoMode vm(1920, 1080);
+	VideoMode vm(720, 1080);
 	//Create and open game window
 	RenderWindow window(vm, "2Player Hockey", Style::Default);
 	window.setVerticalSyncEnabled(true);
@@ -29,11 +29,6 @@ int main()
 	int scoreBottom = 0;
 	int livesTop = 3;
 	int livesBottom = 3;
-
-	//Creating the bat and positioning at the bottom of the screen
-	Bat bat(1920 / 2, 1080 - 20);
-	//Creating the ball and positioning at the top of the screen
-	Ball ball(1920 / 2, 0);
 
 	//Text object
 	Font font;
