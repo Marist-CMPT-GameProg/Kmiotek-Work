@@ -29,6 +29,8 @@ int main()
 	int scoreBottom = 0;
 	const int WIN_SCORE = 7;
 	bool gameOver = false;
+	bool chargedTop = false;
+	bool chargedBottom = false;
 
 	//Game text font
 	Font font;
@@ -182,9 +184,37 @@ int main()
 		}
 		if (ball.getPosition().intersects(batTop.getPosition())) {
 			ball.reboundBatOrTop();
+
+			if (chargedTop) {
+				ball.applySpeedBoost(ball.getBaseSpeed() * 0.5f);
+				chargedTop = false;
+				scoreTop = 0;
+				batTop.setGlow(false);
+			}
+			else {
+				scoreTop = scoreTop + 1;
+				if (scoreTop >= 3) {
+					chargedTop = true;
+					batTop.setGlow(true);
+				}
+			}
 		}
 		if (ball.getPosition().intersects(batBottom.getPosition())) {
 			ball.reboundBatOrTop();
+
+			if (chargedBottom) {
+				ball.applySpeedBoost(ball.getBaseSpeed() * 0.5f);
+				chargedBottom = false;
+				scoreBottom = 0;
+				batBottom.setGlow(false);
+			}
+			else {
+				scoreBottom = scoreBottom + 1;
+				if (scoreBottom >= 3) {
+					chargedBottom = true;
+					batBottom.setGlow(true);
+				}
+			}
 		}
 		//Update the HUD
 		{
@@ -216,6 +246,8 @@ int main()
 		window.draw(batTop.getSprite());
 		window.draw(batBottom.getSprite());
 		window.draw(ball.getShape());
+		if (batTop.isGlowOn())    window.draw(batTop.getGlowShape());
+		if (batBottom.isGlowOn()) window.draw(batBottom.getGlowShape());
 		if (gameOver) {
 			window.draw(winText);
 			window.draw(restartText);
