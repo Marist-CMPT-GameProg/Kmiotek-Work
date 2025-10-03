@@ -100,7 +100,7 @@ void Bat::setTexture(const Texture& tex, Facing facing) {
 	FloatRect lb = m_Sprite.getLocalBounds();
 	m_Sprite.setOrigin(lb.width * 0.5f, lb.height * 0.5f);
 
-	// Scale to rectangle size
+	//Scale to rectangle size
 	const Vector2f rsz = m_Shape.getSize();
 	const float sx = rsz.x / lb.width;
 	const float sy = rsz.y / lb.height;

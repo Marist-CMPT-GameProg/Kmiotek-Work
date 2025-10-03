@@ -27,21 +27,25 @@ int main()
 	//HUD 
 	int scoreTop = 0;
 	int scoreBottom = 0;
-	int livesTop = 3;
-	int livesBottom = 3;
+	const int WIN_SCORE = 7;
+	bool gameOver = false;
 
-	//Text object
+	//Game text font
 	Font font;
 	font.loadFromFile("fonts/ByteBounce.ttf");
-	Text hudTop, hudBottom;
+	Text hudTop, hudBottom, winText;
 	hudTop.setFont(font);
 	hudBottom.setFont(font);
+	winText.setFont(font);
 	hudTop.setCharacterSize(48);
 	hudBottom.setCharacterSize(48);
+	winText.setCharacterSize(72);
 	hudTop.setFillColor(Color::White);
 	hudBottom.setFillColor(Color::White);
+	winText.setFillColor(Color::Yellow);
 	hudTop.setPosition(20.f, 20.f);
 	hudBottom.setPosition(vm.width - 280.f, 20.f);
+	winText.setString("");
 
 	//Rink visuals (center line and lines to define boundaries)
 	const float margin = 24.f;
@@ -92,54 +96,58 @@ int main()
 			window.close();
 		}
 
-		batTop.stopLeft();  batTop.stopRight();
-		batBottom.stopLeft(); batBottom.stopRight();
+		if (!gameOver) {
+			batTop.stopLeft();  batTop.stopRight();
+			batBottom.stopLeft(); batBottom.stopRight();
 
-		//Top player movement keys (A to move left, D to move right)
-		if (Keyboard::isKeyPressed(Keyboard::A)) batTop.moveLeft();  else batTop.stopLeft();
-		if (Keyboard::isKeyPressed(Keyboard::D)) batTop.moveRight(); else batTop.stopRight();
+			//Top player movement keys (A to move left, D to move right)
+			if (Keyboard::isKeyPressed(Keyboard::A)) batTop.moveLeft();  else batTop.stopLeft();
+			if (Keyboard::isKeyPressed(Keyboard::D)) batTop.moveRight(); else batTop.stopRight();
 
-		//Bottom player movement keys (J to move left, L to move right)
-		if (Keyboard::isKeyPressed(Keyboard::J)) batBottom.moveLeft();  else batBottom.stopLeft();
-		if (Keyboard::isKeyPressed(Keyboard::L)) batBottom.moveRight(); else batBottom.stopRight();
+			//Bottom player movement keys (J to move left, L to move right)
+			if (Keyboard::isKeyPressed(Keyboard::J)) batBottom.moveLeft();  else batBottom.stopLeft();
+			if (Keyboard::isKeyPressed(Keyboard::L)) batBottom.moveRight(); else batBottom.stopRight();
+		}
 
 		//Update delta time
 		Time dt = clock.restart();
-		//Update the bat and ball
-		batTop.update(dt);
-		batBottom.update(dt);
-		ball.update(dt);
+		if (!gameOver) {
+			//Update the bats and ball
+			batTop.update(dt);
+			batBottom.update(dt);
+			ball.update(dt);
+		}
 
 		//Handle scoring and lives
-		if (ball.getPosition().top > window.getSize().y)
-		{
-			scoreTop++;
-			livesBottom--;
+		//Bottom player misses, top player scores
+		if (!gameOver && ball.getPosition().top > window.getSize().y) {
+			scoreTop = scoreTop + 1;
 
-			ball.reset(centerX, centerY, true);
-
-			//Check if the player has run out of lives
-			if (livesBottom < 1) {
-				//Reset top and bottom score
-				scoreTop = 0;
-				scoreBottom = 0;
-				//Reset lives
-				livesTop = 3;
-				livesBottom = 3;
+			if (scoreTop >= WIN_SCORE) {
+				gameOver = true;
+				winText.setString("Player 1 Wins!");
+				FloatRect b = winText.getLocalBounds();
+				winText.setOrigin(b.left + b.width * 0.5f, b.top + b.height * 0.5f);
+				winText.setPosition(vm.width * 0.5f, vm.height * 0.5f);
 			}
-		}
-		if (ball.getPosition().top < 0) {
-			livesTop--;
-			scoreBottom--;
-			ball.reset(centerX, centerY, false);
 
-			if (livesTop < 1) { 
-				livesTop = 3; 
-				livesBottom = 3;
-				scoreTop = 0; 
-				scoreBottom = 0; 
-			}
+			ball.reset(centerX, centerY, true);  
 		}
+		//Top player misses, bottom player scores
+		if (!gameOver && ball.getPosition().top < 0) {
+			scoreBottom = scoreBottom + 1;
+
+			if (scoreBottom >= WIN_SCORE) {
+				gameOver = true;
+				winText.setString("Player 2 Wins!");
+				FloatRect b = winText.getLocalBounds();
+				winText.setOrigin(b.left + b.width * 0.5f, b.top + b.height * 0.5f);
+				winText.setPosition(vm.width * 0.5f, vm.height * 0.5f);
+			}
+
+			ball.reset(centerX, centerY, false);  
+		}
+
 		if (ball.getPosition().left < 0 ||
 			ball.getPosition().left + ball.getPosition().width > window.getSize().x) {
 			ball.reboundSides();
@@ -153,8 +161,8 @@ int main()
 		//Update the HUD
 		{
 			stringstream sst, ssb;
-			sst << "Top  Score: " << scoreTop << "  Lives: " << livesTop;
-			ssb << "Bottom Score: " << scoreBottom << "  Lives: " << livesBottom;
+			sst << "P1 (Top)  Score: " << scoreTop;
+			ssb << "P2 (Bottom)  Score: " << scoreBottom;
 			hudTop.setString(sst.str());
 			hudBottom.setString(ssb.str());
 		}
@@ -169,8 +177,10 @@ int main()
 		window.draw(batTop.getSprite());
 		window.draw(batBottom.getSprite());
 		window.draw(ball.getShape());
+		if (gameOver) {
+			window.draw(winText);
+		}
 		window.display();
-
 	}
 	return 0;
 }

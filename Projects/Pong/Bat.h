@@ -24,14 +24,14 @@ public:
     bool hasSprite() const;
     const Sprite& getSprite() const;
 
-    // Horizontal movement limits
+    //Horizontal movement limits
     void setXBounds(float minX, float maxX);
 
 private:
     Vector2f m_Position;
     RectangleShape m_Shape;
 
-    // Movement
+    //Movement
     float m_Speed = 1000.f;
     bool  m_MovingLeft = false;
     bool  m_MovingRight = false;
