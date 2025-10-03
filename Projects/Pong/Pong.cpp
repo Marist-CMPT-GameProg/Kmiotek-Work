@@ -61,6 +61,9 @@ int main()
 	const float maxX = vm.width - margin;          
 	const float startX = (minX + maxX - batW) * 0.5f; 
 
+	const float centerX = vm.width * 0.5f;
+	const float centerY = vm.height * 0.5f;
+
 	const float topY = margin;                      
 	const float bottomY = vm.height - margin - batH;
 
@@ -110,24 +113,29 @@ int main()
 		//Handle scoring and lives
 		if (ball.getPosition().top > window.getSize().y)
 		{
-			//Reverse the ball direction
-			ball.reboundBottom();
-			//Remove a life
+			scoreTop++;
 			livesBottom--;
+
+			ball.reset(centerX, centerY, true);
+
 			//Check if the player has run out of lives
 			if (livesBottom < 1) {
 				//Reset top and bottom score
 				scoreTop = 0;
 				scoreBottom = 0;
 				//Reset lives
+				livesTop = 3;
 				livesBottom = 3;
 			}
 		}
 		if (ball.getPosition().top < 0) {
-			ball.reboundBatOrTop();
 			livesTop--;
+			scoreBottom--;
+			ball.reset(centerX, centerY, false);
+
 			if (livesTop < 1) { 
 				livesTop = 3; 
+				livesBottom = 3;
 				scoreTop = 0; 
 				scoreBottom = 0; 
 			}
@@ -138,11 +146,9 @@ int main()
 		}
 		if (ball.getPosition().intersects(batTop.getPosition())) {
 			ball.reboundBatOrTop();
-			scoreTop++;
 		}
 		if (ball.getPosition().intersects(batBottom.getPosition())) {
 			ball.reboundBatOrTop();
-			scoreBottom++;
 		}
 		//Update the HUD
 		{

@@ -1,43 +1,72 @@
 #include "Ball.h"
+#include <cstdlib>
+
+using namespace sf;
 
 //Constructor to initialize the ball
-Ball::Ball(float startX, float startY) : m_Position(startX, startY)
+Ball::Ball(float startX, float startY)
+    : m_Position(startX, startY)
+    , m_DirectionX(0.f)
+    , m_DirectionY(1.f)       
+    , m_Speed(600.f)    
 {
-	m_Shape.setSize(sf::Vector2f(10, 10));
-	m_Shape.setPosition(m_Position);
+    m_Shape.setRadius(8.f);
+    m_Shape.setOrigin(18.f, 18.f); 
+    m_Shape.setFillColor(Color(30, 30, 30));
+    m_Shape.setOutlineThickness(2.f);
+    m_Shape.setOutlineColor(Color::White);
+    m_Shape.setPosition(m_Position);
+
+    int rx = std::rand() % 2;
+    if (rx == 0) m_DirectionX = -1.f;
+    else         m_DirectionX = 1.f;
+
+    int ry = std::rand() % 2;
+    if (ry == 0) m_DirectionY = -1.f;
+    else         m_DirectionY = 1.f;
 }
 
-FloatRect Ball::getPosition()
-{
-	return m_Shape.getGlobalBounds();
+FloatRect Ball::getPosition() const {
+    return m_Shape.getGlobalBounds();
 }
-RectangleShape Ball::getShape()
-{
-	return m_Shape;
+
+const CircleShape& Ball::getShape() const {
+    return m_Shape;
 }
-float Ball::getXVelocity()
-{
-	return m_DirectionX;
+
+void Ball::update(Time dt) {
+    const float dtSec = dt.asSeconds();
+
+    m_Position.x += m_DirectionX * m_Speed * dtSec;
+    m_Position.y += m_DirectionY * m_Speed * dtSec;
+
+    m_Shape.setPosition(m_Position);
 }
-void Ball::reboundSides()
-{
-	m_DirectionX = -m_DirectionX;
+
+void Ball::reboundSides() {
+    m_DirectionX = -m_DirectionX;
 }
-void Ball::reboundBatOrTop()
-{
-	m_DirectionY = -m_DirectionY;
+
+void Ball::reboundBatOrTop() {
+    m_DirectionY = -m_DirectionY;
 }
-void Ball::reboundBottom()
-{
-	m_Position.y = 0;
-	m_Position.x = 500;
-	m_DirectionY = -m_DirectionY;
+
+void Ball::reboundBottom() {
+    m_DirectionY = -m_DirectionY;
 }
-void Ball::update(Time dt)
-{
-	//Update the ball's position
-	m_Position.y += m_DirectionY * m_Speed * dt.asSeconds();
-	m_Position.x += m_DirectionX * m_Speed * dt.asSeconds();
-	//Move the ball
-	m_Shape.setPosition(m_Position);
+
+void Ball::reset(float centerX, float centerY, bool serveDown) {
+    //Place ball at center
+    m_Position.x = centerX;
+    m_Position.y = centerY;
+    m_Shape.setPosition(m_Position);
+
+    //Random horizontal direction
+    int r = std::rand() % 2;
+    if (r == 0) m_DirectionX = -1.f;
+    else        m_DirectionX = 1.f;
+
+    //Vertical direction based on who missed
+    if (serveDown) m_DirectionY = 1.f;  
+    else           m_DirectionY = -1.f;  
 }
