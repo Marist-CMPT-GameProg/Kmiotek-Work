@@ -1,22 +1,44 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 using namespace sf;
+
 class Bat
 {
-private:
-	Vector2f m_Position;
-	// A RectangleShape object
-	RectangleShape m_Shape;
-	float m_Speed = 1000.0f;
-	bool m_MovingRight = false;
-	bool m_MovingLeft = false;
 public:
-	Bat(float startX, float startY);
-	FloatRect getPosition();
-	RectangleShape getShape();
-	void moveLeft();
-	void moveRight();
-	void stopLeft();
-	void stopRight();
-	void update(Time dt);
+    Bat(float startX, float startY);
+
+    void moveLeft();
+    void moveRight();
+    void stopLeft();
+    void stopRight();
+
+    void update(Time dt);
+
+    FloatRect getPosition() const;            
+    const RectangleShape& getShape() const;    
+
+    void setTexture(const Texture& tex, bool flipHoriz = false);
+    bool hasSprite() const;
+    const Sprite& getSprite() const;
+
+    // Horizontal movement limits
+    void setXBounds(float minX, float maxX);
+
+private:
+    Vector2f m_Position;
+    RectangleShape m_Shape;
+
+    // Movement
+    float m_Speed = 1000.f;
+    bool  m_MovingLeft = false;
+    bool  m_MovingRight = false;
+
+    float m_MinX = 0.f;
+    float m_MaxX = 0.f;
+    float m_FixedY = 0.f;
+
+    Sprite m_Sprite;
+    bool m_HasSprite = false;
+
+    void syncSprite();
 };
