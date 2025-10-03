@@ -5,18 +5,30 @@
 #include <SFML/Audio.hpp>
 #include <sstream> 
 #include <cstdlib>
+#include <ctime>
 
 using namespace sf;
 using namespace std;
 
+static Vector2f rectCenter(const FloatRect& r) {
+	return{ r.left + r.width * 0.5f, r.top + r.height * 0.5f };
+}
+
 int main()
 {
+	//Creating randomly generated events for each playthrough
+	srand(static_cast<unsigned>(time(nullptr)));
 	//Creating video mode object
 	VideoMode vm(1920, 1080);
 	//Create and open game window
-	RenderWindow window(vm, "Pong", Style::Default);
-	int score = 0;
-	int lives = 3;
+	RenderWindow window(vm, "2Player Hockey", Style::Default);
+	window.setVerticalSyncEnabled(true);
+
+	//HUD 
+	int scoreTop = 0;
+	int scoreBottom = 0;
+	int livesTop = 3;
+	int livesBottom = 3;
 
 	//Creating the bat and positioning at the bottom of the screen
 	Bat bat(1920 / 2, 1080 - 20);
@@ -24,14 +36,44 @@ int main()
 	Ball ball(1920 / 2, 0);
 
 	//Text object
-	Text hud;
-
 	Font font;
 	font.loadFromFile("fonts/ByteBounce.ttf");
-	hud.setFont(font);
-	hud.setCharacterSize(75);
-	hud.setFillColor(Color::White);
-	hud.setPosition(20, 20);
+	Text hudTop, hudBottom;
+	hudTop.setFont(font);
+	hudBottom.setFont(font);
+	hudTop.setCharacterSize(48);
+	hudBottom.setCharacterSize(48);
+	hudTop.setFillColor(Color::White);
+	hudBottom.setFillColor(Color::White);
+	hudTop.setPosition(20.f, 20.f);
+	hudBottom.setPosition(vm.width - 280.f, 20.f);
+
+	//Rink visuals (center line and lines to define boundaries)
+	const float margin = 24.f;
+	RectangleShape rink({ vm.width - 2 * margin, vm.height - 2 * margin });
+	rink.setPosition({ margin, margin });
+	rink.setFillColor(Color(200, 225, 255));
+	rink.setOutlineColor(Color::White);
+	rink.setOutlineThickness(6.f);
+
+	RectangleShape centerLine({ vm.width - 2 * margin, 3.f });
+	centerLine.setPosition({ margin, vm.height * 0.5f });
+	centerLine.setFillColor(Color(200, 60, 60));
+
+	const float topY = margin + 96.f;
+	const float bottomY = vm.height - margin - 96.f;
+
+	Bat batTop(vm.width / 0.5f, topY);
+	Bat batBottom(vm.width / 0.5f, bottomY);
+	batTop.setXBounds(margin, vm.width - margin);
+	batBottom.setXBounds(margin, vm.width - margin);
+
+	Texture batTexture;
+	bool batLoaded = batTexture.loadFromFile("graphics/bat.png");
+	batTop.setTexture(batTexture, Bat::Mirror::None);
+	batBottom.setTexture(batTexture, Bat::Mirror::Horizontal);
+
+	Ball ball(vm.width / 2.f, vm.height / 2.f);
 
 	Clock clock;
 	while (window.isOpen()) {
@@ -45,70 +87,76 @@ int main()
 		if (Keyboard::isKeyPressed(Keyboard::Escape)) {
 			window.close();
 		}
-		//Handle press and release of movement keys
-		if (Keyboard::isKeyPressed(Keyboard::Left)) {
-			bat.moveLeft();
-		}
-		else {
-			bat.stopLeft();
-		}
-		if (Keyboard::isKeyPressed(Keyboard::Right)) {
-			bat.moveRight();
-		}
-		else {
-			bat.stopRight();
-		}
+		//Top player movement keys (A to move left, D to move right)
+		if (Keyboard::isKeyPressed(Keyboard::A)) batTop.moveLeft();  else batTop.stopLeft();
+		if (Keyboard::isKeyPressed(Keyboard::D)) batTop.moveRight(); else batTop.stopRight();
+
+		//Bottom player movement keys (J to move left, L to move right)
+		if (Keyboard::isKeyPressed(Keyboard::J)) batBottom.moveLeft();  else batBottom.stopLeft();
+		if (Keyboard::isKeyPressed(Keyboard::L)) batBottom.moveRight(); else batBottom.stopRight();
 
 		//Update delta time
 		Time dt = clock.restart();
 		//Update the bat and ball
-		bat.update(dt);
+		batTop.update(dt);
+		batBottom.update(dt);
 		ball.update(dt);
 
-		//Update HUD text
-		stringstream ss;
-		ss << "Score: " << score << "   Lives: " << lives;
-		hud.setString(ss.str());
-
-		//Handle ball hitting the bottom
+		//Handle scoring and lives
 		if (ball.getPosition().top > window.getSize().y)
 		{
 			//Reverse the ball direction
 			ball.reboundBottom();
 			//Remove a life
-			lives--;
+			livesBottom--;
 			//Check if the player has run out of lives
-			if (lives < 1) {
-					//Reset score
-					score = 0;
+			if (livesBottom < 1) {
+				//Reset top and bottom score
+				scoreTop = 0;
+				scoreBottom = 0;
 				//Reset lives
-				lives = 3;
+				livesBottom = 3;
 			}
 		}
-		//Handle ball hitting top
-		if (ball.getPosition().top < 0)
-		{
+		if (ball.getPosition().top < 0) {
 			ball.reboundBatOrTop();
-			//Increase player score
-			score++;
+			livesTop--;
+			if (livesTop < 1) { 
+				livesTop = 3; 
+				scoreTop = 0; 
+				scoreBottom = 0; 
+			}
 		}
-		//Handle ball hitting sides
 		if (ball.getPosition().left < 0 ||
-			ball.getPosition().left + ball.getPosition().width> window.
-			getSize().x)
-		{ball.reboundSides();
+			ball.getPosition().left + ball.getPosition().width > window.getSize().x) {
+			ball.reboundSides();
 		}
-		//Handle ball hitting bat
-		if (ball.getPosition().intersects(bat.getPosition()))
-		{
-			//Hit detected so reverse the ball and score a point
+		if (ball.getPosition().intersects(batTop.getPosition())) {
 			ball.reboundBatOrTop();
+			scoreTop++;
 		}
-
+		if (ball.getPosition().intersects(batBottom.getPosition())) {
+			ball.reboundBatOrTop();
+			scoreBottom++;
+		}
+		//Update the HUD
+		{
+			stringstream sst, ssb;
+			sst << "Top  Score: " << scoreTop << "  Lives: " << livesTop;
+			ssb << "Bottom Score: " << scoreBottom << "  Lives: " << livesBottom;
+			hudTop.setString(sst.str());
+			hudBottom.setString(ssb.str());
+		}
+		
+		
 		//Draw the bat, ball and hud
-		window.clear();
-		window.draw(hud);
-		window.draw(bat.getShape());
+		window.clear(Color(10, 30, 60));
+		window.draw(rink);
+		window.draw(centerLine);
+		window.draw(hudTop);
+		window.draw(hudBottom);
+		window.draw(batTop.getSprite());
+		window.draw(batBottom.getSprite());
 		window.draw(ball.getShape());
 		window.display();
 
