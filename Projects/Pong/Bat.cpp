@@ -53,3 +53,41 @@ void Bat::update(Time dt) {
 	syncSprite();
 }
 
+FloatRect Bat::getPosition() const {
+	return m_Shape.getGlobalBounds();
+}
+
+const RectangleShape& Bat::getShape() const {
+	return m_Shape;
+}
+
+void Bat::setTexture(const Texture& tex, Mirror mirror) {
+	m_Sprite.setTexture(tex);
+	m_HasSprite = true;
+
+	//Centers bat origin 
+	FloatRect lb = m_Sprite.getLocalBounds();
+	m_Sprite.setOrigin(lb.width * 0.5f, lb.height * 0.5f);
+
+	// Scale to rectangle size
+	Vector2f rsz = m_Shape.getSize();
+	float sx = rsz.x / lb.width;
+	float sy = rsz.y / lb.height;
+	float s = min(sx, sy);
+
+	syncSprite();
+}
+
+bool Bat::hasSprite() const {
+	return m_HasSprite;
+}
+
+const Sprite& Bat::getSprite() const {
+	return m_Sprite;
+}
+
+void Bat::syncSprite() {
+	if (!m_HasSprite) return;
+	const FloatRect gb = m_Shape.getGlobalBounds();
+	m_Sprite.setPosition(gb.left + gb.width * 0.5f, gb.top + gb.height * 0.5f);
+}
