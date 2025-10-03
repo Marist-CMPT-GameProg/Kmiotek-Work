@@ -29,7 +29,7 @@ public:
 
     void setGlow(bool on);
     bool isGlowOn() const;
-	const RectangleShape& getGlowShape() const;
+    void drawGlow(RenderTarget& target, float pixels) const;
 
 private:
     Vector2f m_Position;
@@ -47,8 +47,7 @@ private:
     Sprite m_Sprite;
     bool m_HasSprite = false;
 
-	RectangleShape m_GlowShape;
-    bool m_GlowOn;
+    bool m_GlowOn = false;
 
     void syncSprite();
 };

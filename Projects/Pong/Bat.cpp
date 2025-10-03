@@ -21,15 +21,6 @@ Bat::Bat(float startX, float startY) : m_Position(startX, startY) , m_FixedY(sta
 
 	m_HasSprite = false;
 
-	//Glow effect for when power-up is charged
-	m_GlowShape.setSize(m_Shape.getSize());
-	m_GlowShape.setPosition(m_Position);
-	m_GlowShape.setFillColor(Color(0, 0, 0, 0));
-	m_GlowShape.setOutlineThickness(6.f);
-	//Sets glow color to gold 
-	m_GlowShape.setOutlineColor(Color(255, 215, 0));
-	m_GlowOn = false;
-
 	syncSprite();
 }
 
@@ -90,11 +81,7 @@ void Bat::update(Time dt) {
 		m_Position.x = maxLeft;
 	}
 
-	m_Shape.setPosition(m_Position);
-
-	//Update glow shape position and size to match bat
-	m_GlowShape.setPosition(m_Position);
-	m_GlowShape.setSize(m_Shape.getSize());
+	m_Shape.setPosition(m_Position);	
 
 	syncSprite();
 }
@@ -105,9 +92,6 @@ void Bat::setGlow(bool on) {
 }
 bool Bat::isGlowOn() const {
 	return m_GlowOn;
-}
-const RectangleShape& Bat::getGlowShape() const {
-	return m_GlowShape;
 }
 
 FloatRect Bat::getPosition() const {
@@ -149,6 +133,25 @@ void Bat::setTexture(const Texture& tex, Facing facing) {
 	m_Sprite.setScale(xScale, s);
 
 	syncSprite();
+}
+
+void Bat::drawGlow(RenderTarget& target, float pixels) const {
+	if (!m_GlowOn) return;
+
+	if (m_HasSprite) {
+		Sprite outline = m_Sprite;
+		outline.setColor(Color(255, 215, 0, 100));
+
+		float o = pixels;
+		int dx, dy;
+		for (dy = -1; dy <= 1; ++dy) {
+			for (dx = -1; dx <= 1; ++dx) {
+				if (dx == 0 && dy == 0) continue;
+				outline.setPosition(m_Sprite.getPosition().x + dx * o, m_Sprite.getPosition().y + dy * o);
+				target.draw(outline);
+			}
+		}
+	}
 }
 
 bool Bat::hasSprite() const {

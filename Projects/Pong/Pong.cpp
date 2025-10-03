@@ -243,11 +243,14 @@ int main()
 		window.draw(centerLine);
 		window.draw(hudTop);
 		window.draw(hudBottom);
+
+		if (batTop.isGlowOn()) batTop.drawGlow(window, 2.f);
+		if (batBottom.isGlowOn()) batBottom.drawGlow(window, 2.f);
+
 		window.draw(batTop.getSprite());
 		window.draw(batBottom.getSprite());
 		window.draw(ball.getShape());
-		if (batTop.isGlowOn())    window.draw(batTop.getGlowShape());
-		if (batBottom.isGlowOn()) window.draw(batBottom.getGlowShape());
+
 		if (gameOver) {
 			window.draw(winText);
 			window.draw(restartText);
