@@ -19,6 +19,11 @@ public:
 
     void reset(float centerX, float centerY, bool serveDown);
 
+    void setBaseSpeed(float pixelPerSecond);
+    float getBaseSpeed() const;
+
+    void applySpeedBoost(float amount);
+
 private:
     Vector2f   m_Position;
     CircleShape m_Shape;
@@ -26,5 +31,6 @@ private:
     float m_DirectionX;    
     float m_DirectionY;  
 
+    float m_BaseSpeed;
     float m_Speed;
 };

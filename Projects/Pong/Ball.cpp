@@ -7,7 +7,8 @@ using namespace sf;
 Ball::Ball(float startX, float startY)
     : m_Position(startX, startY)
     , m_DirectionX(0.f)
-    , m_DirectionY(1.f)       
+    , m_DirectionY(1.f)
+	, m_BaseSpeed(400.f)
     , m_Speed(400.f)    
 {
     m_Shape.setRadius(8.f);
@@ -32,6 +33,24 @@ FloatRect Ball::getPosition() const {
 
 const CircleShape& Ball::getShape() const {
     return m_Shape;
+}
+
+void Ball::setBaseSpeed(float pixelPerSecond) {
+    if (pixelPerSecond > 0.f) {
+        m_BaseSpeed = pixelPerSecond;
+        m_Speed = pixelPerSecond;
+    }
+}
+
+float Ball::getBaseSpeed() const {
+    return m_BaseSpeed;
+}
+
+//Increase puck speed when power up is used
+void Ball::applySpeedBoost(float amount) {
+    if (amount > 0.f) {
+        m_Speed = m_Speed + amount;
+    }
 }
 
 void Ball::update(Time dt) {
@@ -60,6 +79,8 @@ void Ball::reset(float centerX, float centerY, bool serveDown) {
     m_Position.x = centerX;
     m_Position.y = centerY;
     m_Shape.setPosition(m_Position);
+    //Reset speed after power up is used
+	m_Speed = m_BaseSpeed;
 
     //Random horizontal direction
     int r = std::rand() % 2;
