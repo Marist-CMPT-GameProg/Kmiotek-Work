@@ -38,8 +38,8 @@ int main()
 	hudBottom.setFont(font);
 	winText.setFont(font);
 	restartText.setFont(font);
-	hudTop.setCharacterSize(48);
-	hudBottom.setCharacterSize(48);
+	hudTop.setCharacterSize(45);
+	hudBottom.setCharacterSize(45);
 	winText.setCharacterSize(72);
 	restartText.setCharacterSize(40);
 	hudTop.setFillColor(Color::White);
@@ -59,7 +59,7 @@ int main()
 	}
 
 	//Rink visuals (center line and lines to define boundaries)
-	const float margin = 24.f;
+	const float margin = 20.f;
 	RectangleShape rink({ vm.width - 2 * margin, vm.height - 2 * margin });
 	rink.setPosition({ margin, margin });
 	rink.setFillColor(Color(200, 225, 255));
@@ -188,11 +188,22 @@ int main()
 		}
 		//Update the HUD
 		{
+			const float marginX = 20.f;
+			const float marginY = 20.f;
 			stringstream sst, ssb;
 			sst << "P1 (Top)  Score: " << scoreTop;
 			ssb << "P2 (Bottom)  Score: " << scoreBottom;
 			hudTop.setString(sst.str());
 			hudBottom.setString(ssb.str());
+
+			FloatRect lt = hudTop.getLocalBounds();
+			hudTop.setOrigin(lt.left, lt.top);
+
+			FloatRect lb = hudBottom.getLocalBounds();
+			hudBottom.setOrigin(lb.left + lb.width, lb.top);
+
+			hudTop.setPosition(marginX, marginY);
+			hudBottom.setPosition(vm.width - marginX, marginY);
 		}
 		
 		
