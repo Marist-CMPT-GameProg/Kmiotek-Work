@@ -8,7 +8,7 @@ Ball::Ball(float startX, float startY)
     : m_Position(startX, startY)
     , m_DirectionX(0.f)
     , m_DirectionY(1.f)       
-    , m_Speed(600.f)    
+    , m_Speed(400.f)    
 {
     m_Shape.setRadius(8.f);
     m_Shape.setOrigin(18.f, 18.f); 

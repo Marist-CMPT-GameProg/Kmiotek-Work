@@ -33,19 +33,30 @@ int main()
 	//Game text font
 	Font font;
 	font.loadFromFile("fonts/ByteBounce.ttf");
-	Text hudTop, hudBottom, winText;
+	Text hudTop, hudBottom, winText, restartText;
 	hudTop.setFont(font);
 	hudBottom.setFont(font);
 	winText.setFont(font);
+	restartText.setFont(font);
 	hudTop.setCharacterSize(48);
 	hudBottom.setCharacterSize(48);
 	winText.setCharacterSize(72);
+	restartText.setCharacterSize(40);
 	hudTop.setFillColor(Color::White);
 	hudBottom.setFillColor(Color::White);
 	winText.setFillColor(Color::Yellow);
+	restartText.setFillColor(Color(240, 240, 240));
 	hudTop.setPosition(20.f, 20.f);
 	hudBottom.setPosition(vm.width - 280.f, 20.f);
 	winText.setString("");
+
+	//Player can press "1" to restart game after a player wins
+	restartText.setString("Press 1 to restart");
+	{
+		FloatRect br = restartText.getLocalBounds();
+		restartText.setOrigin(br.left + br.width * 0.5f, br.top + br.height * 0.5f);
+		restartText.setPosition(vm.width * 0.5f, vm.height * 0.5f + 90.f);
+	}
 
 	//Rink visuals (center line and lines to define boundaries)
 	const float margin = 24.f;
@@ -94,6 +105,23 @@ int main()
 		//Escape key to exit
 		if (Keyboard::isKeyPressed(Keyboard::Escape)) {
 			window.close();
+		}
+
+		if (gameOver) {
+			if (Keyboard::isKeyPressed(Keyboard::Num1)) {
+				//Resets score on game restart
+				scoreTop = 0;
+				scoreBottom = 0;
+				gameOver = false;
+
+				winText.setString("");
+
+				//Puck is reset back to center
+				bool serveDown;
+				if (rand() % 2 == 0) serveDown = true;
+				else                      serveDown = false;
+				ball.reset(centerX, centerY, serveDown);
+			}
 		}
 
 		if (!gameOver) {
@@ -179,6 +207,7 @@ int main()
 		window.draw(ball.getShape());
 		if (gameOver) {
 			window.draw(winText);
+			window.draw(restartText);
 		}
 		window.display();
 	}
