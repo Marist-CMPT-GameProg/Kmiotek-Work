@@ -27,6 +27,10 @@ public:
     //Horizontal movement limits
     void setXBounds(float minX, float maxX);
 
+    void setGlow(bool on);
+    bool isGlowOn() const;
+	const RectangleShape& getGlowShape() const;
+
 private:
     Vector2f m_Position;
     RectangleShape m_Shape;
@@ -42,6 +46,9 @@ private:
 
     Sprite m_Sprite;
     bool m_HasSprite = false;
+
+	RectangleShape m_GlowShape;
+    bool m_GlowOn;
 
     void syncSprite();
 };

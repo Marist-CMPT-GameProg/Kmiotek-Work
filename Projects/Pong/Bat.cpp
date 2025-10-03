@@ -20,6 +20,16 @@ Bat::Bat(float startX, float startY) : m_Position(startX, startY) , m_FixedY(sta
 	m_MaxX = 99999.f;
 
 	m_HasSprite = false;
+
+	//Glow effect for when power-up is charged
+	m_GlowShape.setSize(m_Shape.getSize());
+	m_GlowShape.setPosition(m_Position);
+	m_GlowShape.setFillColor(Color(0, 0, 0, 0));
+	m_GlowShape.setOutlineThickness(6.f);
+	//Sets glow color to gold 
+	m_GlowShape.setOutlineColor(Color(255, 215, 0));
+	m_GlowOn = false;
+
 	syncSprite();
 }
 
@@ -81,7 +91,23 @@ void Bat::update(Time dt) {
 	}
 
 	m_Shape.setPosition(m_Position);
+
+	//Update glow shape position and size to match bat
+	m_GlowShape.setPosition(m_Position);
+	m_GlowShape.setSize(m_Shape.getSize());
+
 	syncSprite();
+}
+
+//Control glow effect for when power-up is charged
+void Bat::setGlow(bool on) {
+	m_GlowOn = on;
+}
+bool Bat::isGlowOn() const {
+	return m_GlowOn;
+}
+const RectangleShape& Bat::getGlowShape() const {
+	return m_GlowShape;
 }
 
 FloatRect Bat::getPosition() const {
