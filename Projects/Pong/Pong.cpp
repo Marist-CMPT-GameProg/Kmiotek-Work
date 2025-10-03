@@ -55,18 +55,24 @@ int main()
 	centerLine.setPosition({ margin, vm.height * 0.5f });
 	centerLine.setFillColor(Color(200, 60, 60));
 
-	const float topY = margin + 96.f;
-	const float bottomY = vm.height - margin - 96.f;
+	const float batW = 100.f;            
+	const float batH = 100.f;            
+	const float minX = margin;
+	const float maxX = vm.width - margin;          
+	const float startX = (minX + maxX - batW) * 0.5f; 
 
-	Bat batTop(vm.width / 0.5f, topY);
-	Bat batBottom(vm.width / 0.5f, bottomY);
+	const float topY = margin;                      
+	const float bottomY = vm.height - margin - batH;
+
+	Bat batTop(startX, topY);
+	Bat batBottom(startX, bottomY);
 	batTop.setXBounds(margin, vm.width - margin);
 	batBottom.setXBounds(margin, vm.width - margin);
 
 	Texture batTexture;
 	bool batLoaded = batTexture.loadFromFile("graphics/bat.png");
-	batTop.setTexture(batTexture, Bat::Mirror::None);
-	batBottom.setTexture(batTexture, Bat::Mirror::Horizontal);
+	batTop.setTexture(batTexture, Bat::Facing::Left);
+	batBottom.setTexture(batTexture, Bat::Facing::Right);
 
 	Ball ball(vm.width / 2.f, vm.height / 2.f);
 
@@ -82,6 +88,10 @@ int main()
 		if (Keyboard::isKeyPressed(Keyboard::Escape)) {
 			window.close();
 		}
+
+		batTop.stopLeft();  batTop.stopRight();
+		batBottom.stopLeft(); batBottom.stopRight();
+
 		//Top player movement keys (A to move left, D to move right)
 		if (Keyboard::isKeyPressed(Keyboard::A)) batTop.moveLeft();  else batTop.stopLeft();
 		if (Keyboard::isKeyPressed(Keyboard::D)) batTop.moveRight(); else batTop.stopRight();

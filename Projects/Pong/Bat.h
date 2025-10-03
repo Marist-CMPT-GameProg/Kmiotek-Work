@@ -5,9 +5,10 @@ using namespace sf;
 class Bat
 {
 public:
-    enum class Mirror { None, Horizontal };
-
     Bat(float startX, float startY);
+
+    enum class Facing { Right, Left };
+
 
     void moveLeft();
     void moveRight();
@@ -19,7 +20,7 @@ public:
     FloatRect getPosition() const;            
     const RectangleShape& getShape() const;    
 
-    void setTexture(const Texture& tex, Mirror mirror = Mirror::None);
+    void setTexture(const Texture& tex, Facing facing);
     bool hasSprite() const;
     const Sprite& getSprite() const;
 
