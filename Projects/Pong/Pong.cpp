@@ -24,6 +24,23 @@ int main()
 	RenderWindow window(vm, "2Player Hockey", Style::Default);
 	window.setVerticalSyncEnabled(true);
 
+	//Background music
+	Music music;
+	if (music.openFromFile("audio/backgroundmusic.mp3")) {
+		music.setLoop(true);
+		music.setVolume(50.f);
+		music.play();
+	}
+
+	SoundBuffer hitBuffer;
+	hitBuffer.loadFromFile("audio/hit.mp3");
+	Sound hitP1;
+	Sound hitP2;
+	hitP1.setBuffer(hitBuffer);
+	hitP2.setBuffer(hitBuffer);
+	hitP1.setVolume(75.f);
+	hitP2.setVolume(75.f);
+	
 	//HUD 
 	int scoreTop = 0;
 	int scoreBottom = 0;
@@ -127,6 +144,8 @@ int main()
 				if (rand() % 2 == 0) serveDown = true;
 				else                      serveDown = false;
 				ball.reset(centerX, centerY, serveDown);
+
+				music.play();
 			}
 		}
 
@@ -163,6 +182,8 @@ int main()
 				FloatRect b = winText.getLocalBounds();
 				winText.setOrigin(b.left + b.width * 0.5f, b.top + b.height * 0.5f);
 				winText.setPosition(vm.width * 0.5f, vm.height * 0.5f);
+
+				music.stop();
 			}
 
 			ball.reset(centerX, centerY, true);  
@@ -177,6 +198,8 @@ int main()
 				FloatRect b = winText.getLocalBounds();
 				winText.setOrigin(b.left + b.width * 0.5f, b.top + b.height * 0.5f);
 				winText.setPosition(vm.width * 0.5f, vm.height * 0.5f);
+
+				music.stop();
 			}
 
 			ball.reset(centerX, centerY, false);  
@@ -192,6 +215,7 @@ int main()
 
 		if (hitTopNow && canHitTop && !gameOver){
 			ball.reboundBatOrTop();
+			hitP1.play();
 
 			if (chargedTop) {
 				ball.applySpeedBoost(ball.getBaseSpeed() * 0.5f);
@@ -210,6 +234,7 @@ int main()
 		}
 		if (hitBottomNow && canHitBottom && !gameOver){
 			ball.reboundBatOrTop();
+			hitP2.play();
 
 			if (chargedBottom) {
 				ball.applySpeedBoost(ball.getBaseSpeed() * 0.5f);

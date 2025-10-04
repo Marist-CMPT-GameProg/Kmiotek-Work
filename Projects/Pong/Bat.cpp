@@ -140,7 +140,7 @@ void Bat::drawGlow(RenderTarget& target, float pixels) const {
 
 	if (m_HasSprite) {
 		Sprite outline = m_Sprite;
-		outline.setColor(Color(255, 215, 0, 100));
+		outline.setColor(Color::Yellow);
 
 		float o = pixels;
 		int dx, dy;
