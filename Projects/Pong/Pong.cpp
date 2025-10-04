@@ -102,6 +102,11 @@ int main()
 	centerLine.setPosition({ margin, vm.height * 0.5f });
 	centerLine.setFillColor(Color(200, 60, 60));
 
+	const float playL = margin;
+	const float playR = vm.width - margin;
+	const float playT = margin;
+	const float playB = vm.height - margin;
+
 	const float batW = 100.f;            
 	const float batH = 100.f;            
 	const float minX = margin;

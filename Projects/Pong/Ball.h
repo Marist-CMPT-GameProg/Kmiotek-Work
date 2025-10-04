@@ -11,6 +11,8 @@ public:
 
     const CircleShape& getShape() const;
 
+    void setPosition(float, float y);
+
     void reboundSides();
     void reboundBatOrTop();
     void reboundBottom();

@@ -27,6 +27,12 @@ Ball::Ball(float startX, float startY)
     else         m_DirectionY = 1.f;
 }
 
+void Ball::setPosition(float x, float y) {
+    m_Position.x = x;
+    m_Position.y = y;
+    m_Shape.setPosition(m_Position);
+}
+
 FloatRect Ball::getPosition() const {
     return m_Shape.getGlobalBounds();
 }
