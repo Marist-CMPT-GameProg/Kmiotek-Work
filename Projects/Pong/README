@@ -1,6 +1,6 @@
 Hello, and welcome to my second project for Game Design and Programming 1!
 
-This is my project's README file, where I will describe how my game, which is a 2 layer hockey game based off of John Hortons “Pong” build, works and the mechanics used within my code.
+This is my project's README file, where I will describe how my game, which is a 2 player hockey game based off of John Hortons “Pong” build, works and the mechanics used within my code.
 
 **Statement of Concept/Theme**
 
@@ -8,7 +8,7 @@ The theme of this game is quite simple. It is a 2 player game where each player 
 
 **Summary of Gameplay Loop**
 
-The gameplay loop consists of going head to head against another player in a swift moving hockey game, where each player takes control of their own hockey stick and most use it to hit the ball back and forth. Successfully getting the puck past the opposing player earns you one point, and you must reach seven total points to win the game. Players can press the “1” key when the game over screen appears to restart the game from scratch, or they can press the “ESCAPE” key to end the program and close the game window. 
+The gameplay loop consists of going head to head against another player in a swift moving hockey game, where each player takes control of their own hockey stick and must use it to hit the ball back and forth. Successfully getting the puck past the opposing player earns you one point, and you must reach seven total points to win the game. Players can press the “1” key when the game over screen appears to restart the game from scratch, or they can press the “ESCAPE” key to end the program and close the game window. 
 
 **Statement of Goal/Objective**
 
@@ -21,6 +21,7 @@ Player actions for this game include - moving left and moving right. Way simpler
 **List of Hazards/Threats**
 
 There are no hazards other than the bounds of the hockey arena. If a player hits the puck out of bounds, the puck is reset back to the center. There are no active threats that players must avoid other than each other. 
+
 Thank you for taking the time to read this file explaining my game, and I hope you enjoy my 2 player hockey game, based off of John Horton's text book and material from class lectures. 
 
 **DISCLAIMER**
