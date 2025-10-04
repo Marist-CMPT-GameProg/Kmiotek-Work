@@ -40,6 +40,15 @@ int main()
 	hitP2.setBuffer(hitBuffer);
 	hitP1.setVolume(75.f);
 	hitP2.setVolume(75.f);
+
+	SoundBuffer chargeBuffer;
+	chargeBuffer.loadFromFile("audio/powerup.mp3");
+	Sound chargeP1;
+	Sound chargeP2;
+	chargeP1.setBuffer(chargeBuffer);
+	chargeP2.setBuffer(chargeBuffer);
+	chargeP1.setVolume(75.f);
+	chargeP2.setVolume(75.f);
 	
 	//HUD 
 	int scoreTop = 0;
@@ -234,6 +243,7 @@ int main()
 				if (hitsTop >= 3) {
 					chargedTop = true;
 					batTop.setGlow(true);
+					chargeP1.play();
 				}
 			}
 			canHitTop = false;
@@ -253,6 +263,7 @@ int main()
 				if (hitsBottom >= 3) {
 					chargedBottom = true;
 					batBottom.setGlow(true);
+					chargeP2.play();
 				}
 			}
 			canHitTop = false;
