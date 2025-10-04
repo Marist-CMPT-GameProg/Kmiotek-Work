@@ -27,10 +27,14 @@ int main()
 	//HUD 
 	int scoreTop = 0;
 	int scoreBottom = 0;
+	int hitsTop = 0;
+	int hitsBottom = 0;
 	const int WIN_SCORE = 7;
 	bool gameOver = false;
 	bool chargedTop = false;
 	bool chargedBottom = false;
+	bool canHitTop = true;
+	bool canHitBottom = true;
 
 	//Game text font
 	Font font;
@@ -182,7 +186,11 @@ int main()
 			ball.getPosition().left + ball.getPosition().width > window.getSize().x) {
 			ball.reboundSides();
 		}
-		if (ball.getPosition().intersects(batTop.getPosition())) {
+
+		bool hitTopNow = ball.getPosition().intersects(batTop.getPosition());
+		bool hitBottomNow = ball.getPosition().intersects(batBottom.getPosition());
+
+		if (hitTopNow && canHitTop && !gameOver){
 			ball.reboundBatOrTop();
 
 			if (chargedTop) {
@@ -198,8 +206,9 @@ int main()
 					batTop.setGlow(true);
 				}
 			}
+			canHitTop = false;
 		}
-		if (ball.getPosition().intersects(batBottom.getPosition())) {
+		if (hitBottomNow && canHitBottom && !gameOver){
 			ball.reboundBatOrTop();
 
 			if (chargedBottom) {
@@ -215,7 +224,12 @@ int main()
 					batBottom.setGlow(true);
 				}
 			}
+			canHitTop = false;
 		}
+
+		if (!hitTopNow) canHitTop = true;
+		if (!hitBottomNow) canHitBottom = true;
+
 		//Update the HUD
 		{
 			const float marginX = 20.f;
