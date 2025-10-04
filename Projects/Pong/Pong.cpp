@@ -187,6 +187,9 @@ int main()
 			}
 
 			ball.reset(centerX, centerY, true);  
+
+			chargedTop = false;   hitsTop = 0;   canHitTop = true;   batTop.setGlow(false);
+			chargedBottom = false; hitsBottom = 0; canHitBottom = true; batBottom.setGlow(false);
 		}
 		//Top player misses, bottom player scores
 		if (!gameOver && ball.getPosition().top < 0) {
@@ -203,6 +206,9 @@ int main()
 			}
 
 			ball.reset(centerX, centerY, false);  
+
+			chargedTop = false;   hitsTop = 0;   canHitTop = true;   batTop.setGlow(false);
+			chargedBottom = false; hitsBottom = 0; canHitBottom = true; batBottom.setGlow(false);
 		}
 
 		if (ball.getPosition().left < 0 ||
@@ -218,14 +224,14 @@ int main()
 			hitP1.play();
 
 			if (chargedTop) {
-				ball.applySpeedBoost(ball.getBaseSpeed() * 0.5f);
+				ball.applySpeedBoost(ball.getBaseSpeed() * 0.75f);
 				chargedTop = false;
-				scoreTop = 0;
+				hitsTop = 0;
 				batTop.setGlow(false);
 			}
 			else {
-				scoreTop = scoreTop + 1;
-				if (scoreTop >= 3) {
+				hitsTop = hitsTop + 1;
+				if (hitsTop >= 3) {
 					chargedTop = true;
 					batTop.setGlow(true);
 				}
@@ -237,14 +243,14 @@ int main()
 			hitP2.play();
 
 			if (chargedBottom) {
-				ball.applySpeedBoost(ball.getBaseSpeed() * 0.5f);
+				ball.applySpeedBoost(ball.getBaseSpeed() * 0.75f);
 				chargedBottom = false;
-				scoreBottom = 0;
+				hitsBottom = 0;
 				batBottom.setGlow(false);
 			}
 			else {
-				scoreBottom = scoreBottom + 1;
-				if (scoreBottom >= 3) {
+				hitsBottom = hitsBottom + 1;
+				if (hitsBottom >= 3) {
 					chargedBottom = true;
 					batBottom.setGlow(true);
 				}
