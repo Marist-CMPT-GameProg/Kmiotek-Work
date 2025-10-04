@@ -1,0 +1,27 @@
+Hello, and welcome to my second project for Game Design and Programming 1!
+
+This is my project's README file, where I will describe how my game, which is a 2 layer hockey game based off of John Hortons “Pong” build, works and the mechanics used within my code.
+
+**Statement of Concept/Theme**
+
+The theme of this game is quite simple. It is a 2 player game where each player controls a hockey stick. The player on top of the screen is player one, and the bottom is player two. Player one is controlled using the A and D keys, and player two is controlled using the J and L keys. Players can only move horizontally. Players must hit the puck behind each other to score points. Scoring 7 total points counts as victory. Players charge up a power move with each successful hit of the puck, and the power move automatically unleashes on the fourth successful hit. The base of this game was built while following the teachings of John Horton's text book on game building in C++, titled "Beginning C++ Game Programming - Learn C++ from scratch by building fun games". Throughout chapters 6-7, Horton describes how to build a basic replica of the classic “Pong” arcade game, which serves as a great tool for learning how to use object oriented programming to code games in C++.
+
+**Summary of Gameplay Loop**
+
+The gameplay loop consists of going head to head against another player in a swift moving hockey game, where each player takes control of their own hockey stick and most use it to hit the ball back and forth. Successfully getting the puck past the opposing player earns you one point, and you must reach seven total points to win the game. Players can press the “1” key when the game over screen appears to restart the game from scratch, or they can press the “ESCAPE” key to end the program and close the game window. 
+
+**Statement of Goal/Objective**
+
+My objective for creating this game was to continue learning from Horton's teachings and dabble in object oriented programming for creating videogames. In the past I have used OOP before, but only for software development reasons, therefore this was a new experience for me. Getting the game to work properly took lots of time and debugging, but was less of a hassle then the first project, which I credit to having more experience coding videogames under my belt after completing the first project. I believe my 2 player hockey game meets the project requirements to the best of my ability. It is fun to play, has a bit of challenge to it, and to top it off, is playable with friends. 
+
+**List of Player Actions**
+
+Player actions for this game include - moving left and moving right. Way simpler than my “Timber!!!” style game in terms of actions, due to the players only having to move the sticks back and forth to play. Hitting "1" on the game over screen restarts the game, and hitting “ESCAPE” at any time will close the game program.
+
+**List of Hazards/Threats**
+
+There are no hazards other than the bounds of the hockey arena. If a player hits the puck out of bounds, the puck is reset back to the center. There are no active threats that players must avoid other than each other. 
+Thank you for taking the time to read this file explaining my game, and I hope you enjoy my 2 player hockey game, based off of John Horton's text book and material from class lectures. 
+
+**DISCLAIMER**
+Sources such as w3schools.com, codeacademy.com and visual studios IntelliSense aid were used for debugging purposes.
