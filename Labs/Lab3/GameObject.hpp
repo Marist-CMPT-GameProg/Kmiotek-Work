@@ -1,5 +1,5 @@
 #pragma once
-
+#include <SFML/Graphics.hpp>
 
 /// <summary>
 /// Simple abstract base class for game objects
@@ -14,14 +14,20 @@ class GameObject
 {
 public:
 	/// <summary>
-	/// 
 	/// </summary>
 	/// <param name=""></param>
-	virtual void handleInput(sf::Event const&);
+	virtual void handleInput(sf::Event const& event);
 
 	/// <summary>
 	/// Update the state of this object incrementally (i.e., one frame worth of update)
 	/// </summary>
 	/// <param name="dt">the elapsed time since the last frame in seconds</param>
-	virtual void update(float dt);
+	virtual void update(sf::Time dt);
+
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+	sf::FloatRect getCollider() const;
+
+protected:
+	sf::Sprite sprite;
 };
